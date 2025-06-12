@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para Analice ❤️</title>
+    <title>Para [Nome da Pessoa Amada] ❤️</title>
     <style>
         /* Estilos CSS para deixar a página bonita */
         body {
@@ -18,17 +18,23 @@
             text-align: center;
             line-height: 1.6;
             overflow-x: hidden; /* Evita rolagem horizontal */
+            overflow-y: auto; /* Permite rolagem vertical por padrão */
         }
+        /* Classe para impedir a rolagem do corpo quando o modal está ativo */
+        body.no-scroll {
+            overflow: hidden;
+        }
+
         .container {
-            background-color: rgba(255, 255, 255, 0.45); /* Agora com transparência */
+            background-color: rgba(255, 255, 255, 0.85); /* Agora com transparência */
             padding: 30px 40px;
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             max-width: 600px;
             margin: 20px;
             animation: fadeIn 2s ease-out; /* Animação de entrada */
-            position: relative; /* Para posicionar o slideshow */
-            z-index: 1; /* Garante que o conteúdo fique acima do slideshow se houver sobreposição */
+            position: relative; /* Para empilhamento com z-index */
+            z-index: 1; /* Garante que o conteúdo fique acima do slideshow */
         }
         h1 {
             color: #d147a3; /* Um tom de rosa mais escuro */
@@ -41,59 +47,49 @@
             margin-bottom: 15px;
         }
         #mensagem-especial { /* Estilo para a mensagem principal */
-            color: #d147a3; /* Exemplo: um tom de roxo para a mensagem especial */
-            font-weight: bold; /* Opcional: para deixar o texto em negrito */
-            text-shadow: -1px -1px 0 #000,  /* Sombra superior esquerda */
-                     1px -1px 0 #000,   /* Sombra superior direita */
-                     -1px 1px 0 #000,   /* Sombra inferior esquerda */
-                     1px 1px 0 #000;    /* Sombra inferior direita */
-        /* Você pode ajustar a cor do contorno aqui (#000 é preto).
-           Para um contorno branco, use #FFF. */
+            color: #9c27b0;
+            font-weight: bold;
+            text-shadow: -1px -1px 0 #000,
+                         1px -1px 0 #000,
+                         -1px 1px 0 #000,
+                         1px 1px 0 #000;
         }
         
-        /* Estilo para a cor do texto da contagem dinâmica */
         #contagem-dias {
-            color: #e91e63 !important; /* Cor rosa vibrante. Use !important para garantir que se sobreponha ao estilo inline. */
-            font-weight: bold; /* Deixar em negrito, por exemplo */
-            font-size: 1.25em; /* Ligeiramente maior para destacar */
-            text-shadow: -1px -1px 0 #000,  /* Sombra superior esquerda */
-                     1px -1px 0 #000,   /* Sombra superior direita */
-                     -1px 1px 0 #000,   /* Sombra inferior esquerda */
-                     1px 1px 0 #000;    /* Sombra inferior direita */
-        /* Você pode ajustar a cor do contorno aqui (#000 é preto).
-           Para um contorno branco, use #FFF. */
+            color: #e91e63 !important;
+            font-weight: bold;
+            font-size: 1.25em;
         }
 
-        /* Estilo para a cor do texto da assinatura */
         #assinatura {
-            color: #d147a3; /* Você pode usar a mesma cor do título ou outra de sua preferência */
-            font-size: 0.9em; /* Mantém o tamanho original, mas agora no CSS */
-            margin-top: 30px; /* Mantém a margem original, mas agora no CSS */
-            font-weight: bold; /* Opcional: para destacar a assinatura */
+            color: #d147a3;
+            font-size: 0.9em;
+            margin-top: 30px;
+            font-weight: bold;
         }
 
         .countdown-container {
             margin-top: 25px;
             margin-bottom: 25px;
             display: flex;
-            flex-wrap: wrap; /* Permite quebrar em várias linhas se necessário */
+            flex-wrap: wrap;
             justify-content: center;
-            gap: 15px; /* Espaço entre os itens */
+            gap: 15px;
         }
         .time-unit {
-            background-color: #e91e63; /* Rosa vibrante para o fundo */
+            background-color: #e91e63;
             color: white;
             padding: 10px 15px;
             border-radius: 8px;
-            font-size: 1.6em; /* Tamanho da fonte maior para os números */
+            font-size: 1.6em;
             font-weight: bold;
-            min-width: 80px; /* Largura mínima para manter alinhamento */
+            min-width: 80px;
             text-align: center;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         .time-unit .label {
             display: block;
-            font-size: 0.55em; /* Tamanho da fonte menor para o rótulo (ex: "dias") */
+            font-size: 0.55em;
             font-weight: normal;
             margin-top: 5px;
             opacity: 0.8;
@@ -101,7 +97,7 @@
         .heart {
             color: #e91e63;
             font-size: 2em;
-            animation: pulse 1.5s infinite; /* Animação de pulso para o coração */
+            animation: pulse 1.5s infinite;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -113,43 +109,95 @@
             100% { transform: scale(1); }
         }
 
-        /* Estilos do Slideshow */
+        /* Estilos do slideshow para que ele NÃO APAREÇA por padrão (apenas modal) */
         .slideshow-container {
-            position: absolute; /* Posiciona o slideshow atrás do conteúdo principal */
-            top: 50%; /* Centraliza verticalmente */
-            left: 50%; /* Centraliza horizontalmente */
-            transform: translate(-50%, -50%); /* Ajusta para centralizar exatamente */
-            
-            /* Diminuir o tamanho do carrossel e arredondar os cantos */
-            width: 70vw; /* Diminui a largura para 70% da viewport */
-            max-width: 800px; /* Limita a largura máxima */
-            height: 50vh; /* Diminui a altura para 50% da viewport */
-            max-height: 450px; /* Limita a altura máxima */
-            
-            overflow: hidden;
-            z-index: 0; /* Garante que fique no fundo */
-            
-            /* Arredondar os cantos do container do slideshow */
-            border-radius: 20px; /* Cantos arredondados */
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Adiciona uma sombra para destaque */
-        }
-        .slideshow-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Cobre o container, cortando se necessário (comportamento original) */
-            position: absolute;
+            position: fixed; /* Fixado na viewport para o modal */
             top: 0;
             left: 0;
-            opacity: 0; /* Inicialmente invisível */
-            transition: opacity 1.5s ease-in-out; /* Transição suave */
-            filter: brightness(0.7) blur(2px); /* Mantive os valores originais para um fundo mais suave */
-            transform: scale(1.05); /* Pequeno zoom para preencher melhor */
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.95); /* Fundo escuro opaco */
+            z-index: 1000; /* Fica acima de tudo */
             
-            /* Arredondar os cantos das imagens (importante para consistência) */
-            border-radius: 20px; /* Mesmo valor do container */
+            display: flex; /* Para centralizar a imagem dentro do modal */
+            justify-content: center;
+            align-items: center;
+            cursor: pointer; /* Indica que o overlay pode ser clicado para fechar */
+
+            opacity: 0; /* Começa invisível */
+            visibility: hidden; /* Oculta completamente, não interage com cliques */
+            transition: opacity 0.3s ease, visibility 0.3s ease; /* Transição suave */
+
+            border-radius: 0; /* Remove bordas arredondadas (modal) */
+            box-shadow: none; /* Remove sombra (modal) */
         }
+        
+        /* Estilos quando o slideshow está ATIVO como modal */
+        .slideshow-container.modal-active {
+            opacity: 1; /* Torna visível */
+            visibility: visible; /* Torna clicável */
+            transform: none; /* Garante que não haja transformações residuais */
+        }
+
+        .slideshow-image {
+            width: 90%; /* Ajusta o tamanho da imagem no modal */
+            height: 90%;
+            max-width: 900px; /* Max width para a imagem do modal */
+            max-height: 600px; /* Max height para a imagem do modal */
+            object-fit: contain; /* Ajusta a imagem para caber inteira, sem cortar */
+            
+            position: absolute; /* Mantém absoluto para o efeito de fade entre imagens */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Centraliza a imagem */
+
+            opacity: 0; /* Imagem individual começa invisível */
+            transition: opacity 1.5s ease-in-out; /* Transição para o fade */
+            
+            filter: none; /* Remove blur e brilho (não é mais fundo) */
+            border-radius: 15px; /* Mantém um pequeno arredondamento para a imagem */
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); /* Uma leve sombra/brilho na imagem */
+        }
+
+        /* A imagem ativa dentro do slideshow (agora, apenas modal) fica visível */
         .slideshow-image.active {
-            opacity: 1; /* Ativa a imagem */
+            opacity: 1;
+        }
+        
+        /* Estilo para o botão de abrir o slideshow */
+        #openSlideshowBtn {
+            margin-top: 20px;
+            padding: 12px 25px;
+            font-size: 1.15em;
+            background-color: #e91e63; /* Cor do coração */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #openSlideshowBtn:hover {
+            background-color: #d147a3; /* Um tom um pouco mais escuro ao passar o mouse */
+            transform: translateY(-2px); /* Pequeno efeito de elevação */
+        }
+
+        /* Estilos para o botão de fechar (X) */
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1001; /* Fica acima do slideshow e da imagem */
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            transition: color 0.3s ease;
+        }
+        .close-btn:hover {
+            color: #d147a3; /* Muda de cor ao passar o mouse */
         }
 
         /* Estilo para telas menores */
@@ -168,24 +216,33 @@
                 min-width: 60px;
                 padding: 8px 12px;
             }
-            .slideshow-container {
-                width: 90vw; /* Ocupa mais espaço em telas pequenas */
-                height: 45vh; /* Altura ajustada */
-                border-radius: 15px; /* Menos arredondado em telas pequenas, se preferir */
+            /* Ajusta o botão para telas menores */
+            #openSlideshowBtn {
+                padding: 10px 20px;
+                font-size: 1em;
             }
-            .slideshow-image {
-                border-radius: 15px; /* Correspondente ao container em telas pequenas */
+            /* Slideshow container (modal) em telas menores */
+            .slideshow-image { /* Note: removed .modal-active here to apply to images within modal */
+                width: 95%; /* Ajusta o tamanho da imagem para caber melhor no mobile */
+                height: 95%;
+            }
+            /* Ajusta a posição do botão fechar para telas menores */
+            .close-btn {
+                top: 10px;
+                right: 15px;
+                font-size: 30px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="slideshow-container">
+    <div class="slideshow-container" id="slideshowContainer">
+        <span class="close-btn" id="closeSlideshowBtn">&times;</span>
         </div>
 
     <div class="container">
         <span class="heart">❤️</span>
-        <h1>Para Analice, Com Todo Amor!</h1>
+        <h1>Para [Nome da Pessoa Amada], Com Todo Amor!</h1>
         <p id="mensagem-especial">
             </p>
 
@@ -220,9 +277,12 @@
         </div>
 
         <p id="assinatura" style="margin-top: 30px; font-size: 0.9em;">
-            Com carinho, do seu amor, Willian!
+            Com carinho, do seu amor, [Seu Nome].
         </p>
         <span class="heart">❤️</span>
+
+        <button id="openSlideshowBtn">Ver Nossas Fotos</button>
+
     </div>
 
     <script>
@@ -232,7 +292,7 @@
         const dataReferenciaStr = "2025-01-01"; // DATA FIXA: 1 de Janeiro de 2025
 
         // Sua mensagem especial para a pessoa amada
-        const suaMensagem = "Feliz Dia dos Namorados, minha vida! Nossa história é a mais linda que eu poderia sonhar, e cada dia ao seu lado é um presente para mim. Que o nosso amor continue crescendo e nos fazendo transbordar felicidade e companheirismo. Você é e sempre será meu grande amor, obrigado por ser quem é e me ajudar a melhorar a  cada dia! Te amo biri!! ";
+        const suaMensagem = "Meu amor, neste Dia dos Namorados, quero que saiba que meu coração transborda de gratidão por ter você.<br>Você é a melodia mais linda da minha vida, e cada momento contigo é um presente.<br>Feliz Dia dos Namorados! Te amo infinito!";
 
         // --- CONFIGURAÇÕES DO SLIDESHOW ---
         const images = [
@@ -246,6 +306,7 @@
             "nosso_amor_8.jpeg", 
         ];
         const slideshowIntervalTime = 5000; // 5 segundos por padrão
+        let currentSlideshowInterval; // Variável para controlar o intervalo do slideshow
 
         // --- LÓGICA DE CÁLCULO E EXIBIÇÃO EM TEMPO REAL ---
 
@@ -314,7 +375,7 @@
                 days = Math.floor((startDate.getTime() - tempCurrent.getTime()) / (1000 * 60 * 60 * 24));
             }
 
-            document.getElementById('mensagem-especial').innerText = suaMensagem;
+            document.getElementById('mensagem-especial').innerHTML = suaMensagem; // Usando innerHTML para quebrar linhas
 
             const yearsEl = document.getElementById('years');
             const monthsEl = document.getElementById('months');
@@ -349,42 +410,37 @@
                                  now.getMonth() === startDate.getMonth() &&
                                  now.getDate() === startDate.getDate());
 
-            // Esta lógica decide qual mensagem de tempo exibir e se o contador deve aparecer
-            if (isFutureDate) { // Se a data de referência (2025-01-01) é no futuro em relação à data atual (ela não é, então este bloco não deve ser executado no momento)
+            if (isFutureDate) { 
                 if (isExactDate && (hours + minutes + seconds === 0)) {
                     mensagemFinal = "Hoje é a nossa data especial! Um dia inesquecível!";
-                    document.querySelector('.countdown-container').style.display = 'none'; // Esconde o contador
+                    document.querySelector('.countdown-container').style.display = 'none';
                 } else {
                     if (years > 0) { contagemTexto += years + (years === 1 ? ' ano' : ' anos'); if (months > 0 && days > 0) contagemTexto += ", "; else if (months > 0 || days > 0) contagemTexto += " e "; }
                     if (months > 0) { contagemTexto += months + (months === 1 ? ' mês' : ' meses'); if (days > 0) contagemTexto += " e "; }
                     if (days > 0 || (years === 0 && months === 0 && (hours > 0 || minutes > 0 || seconds > 0))) { contagemTexto += days + (days === 1 ? ' dia' : ' dias'); } else if (years === 0 && months === 0 && days === 0) { contagemTexto += ""; }
                     mensagemFinal = "Faltam " + contagemTexto + "!";
-                    document.querySelector('.countdown-container').style.display = 'flex'; // Mostra o contador
+                    document.querySelector('.countdown-container').style.display = 'flex';
                 }
-            } else { // Este bloco é executado porque 2025-01-01 é no passado em relação à data atual
+            } else { 
                 if (years > 0) { contagemTexto += years + (years === 1 ? ' ano' : ' anos'); if (months > 0 && days > 0) contagemTexto += ", "; else if (months > 0 || days > 0) contagemTexto += " e "; }
                 if (months > 0) { contagemTexto += months + (months === 1 ? ' mês' : ' meses'); if (days > 0) contagemTexto += " e "; }
                 if (days > 0 || (years === 0 && months === 0 && (hours > 0 || minutes > 0 || seconds > 0))) { contagemTexto += days + (days === 1 ? ' dia' : ' dias'); } else if (years === 0 && months === 0 && days === 0) { contagemTexto += ""; }
                
-                mensagemFinal = "Estamos juntos há " + contagemTexto + ". Meu amor cresce a cada dia!";
-                document.querySelector('.countdown-container').style.display = 'flex'; // GARANTIDO: o contador é exibido aqui
+                mensagemFinal = "Estamos juntos há " + contagemTexto + ". Te amo mais a cada dia!";
+                document.querySelector('.countdown-container').style.display = 'flex';
             }
             
             document.getElementById('contagem-dias').innerText = mensagemFinal; 
 
-            // Gerencia a visibilidade das unidades de tempo (anos, meses, dias)
-            // Esta parte mostra ou esconde as caixinhas individuais com base nos valores
-            if (isExactDate && (hours + minutes + seconds === 0)) { // Esta condição só é verdadeira na data exata
+            if (isExactDate && (hours + minutes + seconds === 0)) { 
                 yearsUnitEl.style.display = 'none';
                 monthsUnitEl.style.display = 'none';
                 daysEl.parentElement.style.display = 'none';
                 hoursEl.parentElement.style.display = 'none';
                 minutesEl.parentElement.style.display = 'none';
                 secondsEl.parentElement.style.display = 'none';
-            } else { // Para todas as outras datas (que é o caso agora)
-                // Certifica-se de que o container principal esteja visível
+            } else { 
                 document.querySelector('.countdown-container').style.display = 'flex';
-                // E então ajusta a visibilidade das unidades individuais
                 yearsUnitEl.style.display = (years > 0) ? 'flex' : 'none';
                 monthsUnitEl.style.display = (months > 0 || years > 0) ? 'flex' : 'none';
                 daysEl.parentElement.style.display = 'flex'; 
@@ -393,7 +449,6 @@
                 secondsEl.parentElement.style.display = 'flex';
             }
 
-            // Para depuração: Verifique isso no console do seu navegador (F12)
             console.log("updateCountdown executado. Mensagem: ", mensagemFinal);
             console.log("Contador visível?", document.querySelector('.countdown-container').style.display);
             console.log(`Anos: ${years}, Meses: ${months}, Dias: ${days}, Horas: ${hours}, Minutos: ${minutes}, Segundos: ${seconds}`);
@@ -403,60 +458,117 @@
         // --- Lógica do Slideshow ---
         let slideIndex = 0;
         let slideshowImages = []; 
+        const slideshowContainer = document.getElementById('slideshowContainer');
+        const body = document.body; // Referência ao body para controlar a rolagem
 
         function showSlides() {
-            if (slideshowImages.length === 0) return;
+            if (slideshowImages.length === 0) {
+                console.warn("Nenhuma imagem no slideshowImages array. Verifique initializeSlideshowImages().");
+                return;
+            }
+            // Remove 'active' de todas as imagens
             for (let i = 0; i < slideshowImages.length; i++) {
                 slideshowImages[i].classList.remove('active');
             }
+            // Adiciona 'active' à imagem atual
             slideshowImages[slideIndex].classList.add('active');
             
+            console.log(`Ativando slide: ${slideIndex}. Image src: ${slideshowImages[slideIndex].src}`);
+
+            // Avança para a próxima imagem, voltando ao início se for a última
             slideIndex++;
             if (slideIndex >= slideshowImages.length) {
                 slideIndex = 0;
             }
         }
 
-        function initializeSlideshow() {
-            const slideshowContainer = document.querySelector('.slideshow-container');
+        function initializeSlideshowImages() {
             if (!slideshowContainer) {
-                console.error("Erro: Elemento .slideshow-container não encontrado.");
+                console.error("Erro: Elemento slideshowContainer não encontrado.");
                 return;
             }
-            slideshowContainer.innerHTML = '';
-            slideshowImages = []; 
+            // Não limpa o innerHTML para preservar o botão de fechar que está no HTML
+            // Mas, sim, remove as imagens existentes se a função for chamada novamente
+            const existingImages = slideshowContainer.querySelectorAll('.slideshow-image');
+            existingImages.forEach(img => img.remove());
 
+            slideshowImages = []; 
             images.forEach(src => {
                 const img = document.createElement('img');
                 img.src = src; 
                 img.classList.add('slideshow-image'); 
-                img.onerror = () => {
+                img.onload = () => { 
+                    console.log(`Imagem carregada com sucesso: ${src}`);
+                };
+                img.onerror = () => { 
                     console.error(`Erro ao carregar imagem: ${src}. Verifique o nome e o caminho do arquivo.`);
                 };
                 slideshowContainer.appendChild(img);
                 slideshowImages.push(img);
             });
 
-            if (slideshowImages.length > 0) {
-                showSlides(); 
-                if (window.slideshowIntervalId) {
-                    clearInterval(window.slideshowIntervalId);
-                }
-                window.slideshowIntervalId = setInterval(showSlides, slideshowIntervalTime);
-            } else {
-                console.warn("Nenhuma imagem configurada para o slideshow. Verifique a array 'images'.");
+            // NOVO: O slideshow NÃO começa a rodar aqui. Ele só é populado com as imagens.
+            // A lógica de iniciar o carrossel (setInterval) agora está em 'openSlideshow'.
+        }
+
+        // --- Lógica do Botão e Modal Slideshow ---
+        const openSlideshowBtn = document.getElementById('openSlideshowBtn');
+        const closeSlideshowBtn = document.getElementById('closeSlideshowBtn'); // Referência ao novo botão X
+        
+        // Função para abrir o slideshow
+        function openSlideshow() {
+            console.log("Abrindo modal do slideshow.");
+            slideshowContainer.classList.add('modal-active');
+            body.classList.add('no-scroll');
+            slideIndex = 0; // Reinicia o índice do slide para a primeira imagem
+            showSlides(); // Exibe a primeira imagem imediatamente
+
+            // Inicia o intervalo do slideshow apenas quando o modal é aberto
+            if (currentSlideshowInterval) {
+                clearInterval(currentSlideshowInterval);
+            }
+            currentSlideshowInterval = setInterval(showSlides, slideshowIntervalTime);
+        }
+
+        // Função para fechar o slideshow
+        function closeSlideshow() {
+            console.log("Fechando modal do slideshow.");
+            slideshowContainer.classList.remove('modal-active');
+            body.classList.remove('no-scroll');
+            // Para o intervalo do slideshow quando o modal é fechado
+            if (currentSlideshowInterval) {
+                clearInterval(currentSlideshowInterval);
             }
         }
 
+        if (openSlideshowBtn && slideshowContainer && closeSlideshowBtn) { // Verifique se todos os elementos existem
+            openSlideshowBtn.addEventListener('click', openSlideshow);
+
+            // Listener para fechar o modal ao clicar em qualquer lugar do overlay (incluindo imagens), exceto no botão 'X'
+            slideshowContainer.addEventListener('click', (event) => {
+                if (event.target === slideshowContainer || (event.target.classList.contains('slideshow-image') && event.target.id !== 'closeSlideshowBtn')) {
+                    closeSlideshow();
+                }
+            });
+            
+            // Listener para o botão 'X' de fechar
+            closeSlideshowBtn.addEventListener('click', closeSlideshow);
+
+        } else {
+            console.error("Um ou mais elementos essenciais (openSlideshowBtn, slideshowContainer, closeSlideshowBtn) não foram encontrados. Verifique os IDs.");
+        }
+
+
+        // --- Inicialização ao carregar a página ---
         document.addEventListener('DOMContentLoaded', () => {
             console.log("DOM completamente carregado. Iniciando scripts.");
-            initializeSlideshow(); 
+            initializeSlideshowImages(); // Apenas prepara as imagens no DOM
             updateCountdown(); 
             if (window.countdownIntervalId) {
                 clearInterval(window.countdownIntervalId);
             }
             window.countdownIntervalId = setInterval(updateCountdown, 1000); 
-            console.log("Scripts de contagem e slideshow iniciados.");
+            console.log("Scripts de contagem iniciados.");
         });
     </script>
 </body>
