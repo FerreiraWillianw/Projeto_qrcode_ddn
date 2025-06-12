@@ -45,11 +45,19 @@
             font-weight: bold; /* Opcional: para deixar o texto em negrito */
         }
         
-        /* NOVO ESTILO: Para a cor do texto da contagem dinâmica */
+        /* Estilo para a cor do texto da contagem dinâmica */
         #contagem-dias {
-            color: #9c27b0 !important; /* Cor rosa vibrante. Use !important para garantir que se sobreponha ao estilo inline. */
+            color: #e91e63 !important; /* Cor rosa vibrante. Use !important para garantir que se sobreponha ao estilo inline. */
             font-weight: bold; /* Deixar em negrito, por exemplo */
             font-size: 1.25em; /* Ligeiramente maior para destacar */
+        }
+
+        /* NOVO ESTILO: Para a cor do texto da assinatura */
+        #assinatura {
+            color: #d147a3; /* Você pode usar a mesma cor do título ou outra de sua preferência */
+            font-size: 0.9em; /* Mantém o tamanho original, mas agora no CSS */
+            margin-top: 30px; /* Mantém a margem original, mas agora no CSS */
+            font-weight: bold; /* Opcional: para destacar a assinatura */
         }
 
         .countdown-container {
@@ -172,34 +180,7 @@
         <p id="contagem-dias"> 
             </p>
 
-        <div class="countdown-container">
-            <div class="time-unit" id="years-unit">
-                <span id="years">00</span>
-                <span class="label">anos</span>
-            </div>
-            <div class="time-unit" id="months-unit">
-                <span id="months">00</span>
-                <span class="label">meses</span>
-            </div>
-            <div class="time-unit" id="days-unit">
-                <span id="days">00</span>
-                <span class="label">dias</span>
-            </div>
-            <div class="time-unit" id="hours-unit">
-                <span id="hours">00</span>
-                <span class="label">horas</span>
-            </div>
-            <div class="time-unit" id="minutes-unit">
-                <span id="minutes">00</span>
-                <span class="label">minutos</span>
-            </div>
-            <div class="time-unit" id="seconds-unit">
-                <span id="seconds">00</span>
-                <span class="label">segundos</span>
-            </div>
-        </div>
-
-        <p style="margin-top: 30px; font-size: 0.9em; color: #666;">
+        <p id="assinatura" style="margin-top: 30px; font-size: 0.9em;">
             Com carinho, do seu amor, [Seu Nome].
         </p>
         <span class="heart">❤️</span>
@@ -351,8 +332,6 @@
             
             document.getElementById('contagem-dias').innerText = mensagemFinal; 
 
-            // Gerencia a visibilidade das unidades de tempo (anos, meses, dias)
-            // Lógica para ocultar "anos" e "meses" se forem zero.
             if (isExactDate && (hours + minutes + seconds === 0)) { 
                 yearsUnitEl.style.display = 'none';
                 monthsUnitEl.style.display = 'none';
