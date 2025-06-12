@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para Minha Biri Especial ❤️</title>
+    <title>Para Analice ❤️</title>
     <style>
         /* Estilos CSS para deixar a página bonita */
         body {
@@ -17,6 +17,7 @@
             color: #333;
             text-align: center;
             line-height: 1.6;
+            overflow-x: hidden; /* Evita rolagem horizontal */
         }
         .container {
             background-color: #fff;
@@ -26,6 +27,8 @@
             max-width: 600px;
             margin: 20px;
             animation: fadeIn 2s ease-out; /* Animação de entrada */
+            position: relative; /* Para posicionar o slideshow */
+            z-index: 1; /* Garante que o conteúdo fique acima do slideshow se houver sobreposição */
         }
         h1 {
             color: #d147a3; /* Um tom de rosa mais escuro */
@@ -37,12 +40,31 @@
             font-size: 1.2em;
             margin-bottom: 15px;
         }
-        .highlight {
-            font-size: 1.5em;
+        .countdown-container {
+            margin-top: 25px;
+            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap; /* Permite quebrar em várias linhas se necessário */
+            justify-content: center;
+            gap: 15px; /* Espaço entre os itens */
+        }
+        .time-unit {
+            background-color: #e91e63; /* Rosa vibrante para o fundo */
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 1.6em; /* Tamanho da fonte maior para os números */
             font-weight: bold;
-            color: #e91e63; /* Um tom de rosa vibrante */
-            margin-top: 20px;
-            display: block; /* Garante que o span ocupe a linha inteira */
+            min-width: 80px; /* Largura mínima para manter alinhamento */
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .time-unit .label {
+            display: block;
+            font-size: 0.55em; /* Tamanho da fonte menor para o rótulo (ex: "dias") */
+            font-weight: normal;
+            margin-top: 5px;
+            opacity: 0.8;
         }
         .heart {
             color: #e91e63;
@@ -58,18 +80,91 @@
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
+
+        /* Estilos do Slideshow */
+        .slideshow-container {
+            position: absolute; /* Posiciona o slideshow atrás do conteúdo principal */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0; /* Garante que fique no fundo */
+        }
+        .slideshow-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Cobre o container sem distorcer, cortando se necessário */
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0; /* Inicialmente invisível */
+            transition: opacity 1.5s ease-in-out; /* Transição suave */
+            filter: brightness(0.7) blur(2px); /* Escurece e borra um pouco para o texto se destacar */
+            transform: scale(1.05); /* Pequeno zoom para preencher melhor */
+        }
+        .slideshow-image.active {
+            opacity: 1; /* Ativa a imagem */
+        }
+
+        /* Estilo para telas menores */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 25px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            p {
+                font-size: 1.1em;
+            }
+            .time-unit {
+                font-size: 1.4em;
+                min-width: 60px;
+                padding: 8px 12px;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="slideshow-container">
+        </div>
+
     <div class="container">
         <span class="heart">❤️</span>
-        <h1>Para Minha Biri, Com Todo Amor!</h1>
+        <h1>Para Analice, Com Todo Amor!</h1>
         <p id="mensagem-especial">
             </p>
-        <span id="contagem-dias" class="highlight">
-            </span>
+
+        <div class="countdown-container">
+            <div class="time-unit" id="years-unit">
+                <span id="years">00</span>
+                <span class="label">anos</span>
+            </div>
+            <div class="time-unit" id="months-unit">
+                <span id="months">00</span>
+                <span class="label">meses</span>
+            </div>
+            <div class="time-unit" id="days-unit">
+                <span id="days">00</span>
+                <span class="label">dias</span>
+            </div>
+            <div class="time-unit" id="hours-unit">
+                <span id="hours">00</span>
+                <span class="label">horas</span>
+            </div>
+            <div class="time-unit" id="minutes-unit">
+                <span id="minutes">00</span>
+                <span class="label">minutos</span>
+            </div>
+            <div class="time-unit" id="seconds-unit">
+                <span id="seconds">00</span>
+                <span class="label">segundos</span>
+            </div>
+        </div>
+
         <p style="margin-top: 30px; font-size: 0.9em; color: #666;">
-            Com carinho, do seu amor.
+            Com carinho, do seu amor, Willian! .
         </p>
         <span class="heart">❤️</span>
     </div>
@@ -77,43 +172,261 @@
     <script>
         // --- CONFIGURAÇÕES DA PÁGINA (JavaScript) ---
 
-        // A data de referência para a contagem de dias (AAAA-MM-DD)
-        // *** MANTENHA ESTA DATA EXATAMENTE IGUAL À DO SEU CÓDIGO PYTHON ***
+        // A data de referência para a contagem (AAAA-MM-DD)
+        // Por exemplo: "2018-05-06" para 6 de maio de 2018
         const dataReferenciaStr = "2024-09-26"; 
 
-        // Sua mensagem especial para Biri (aqui no JavaScript)
-        const suaMensagem = "Meu amor, você é a pessoa mais incrível que já conheci. Cada dia ao seu lado é um presente.";
+        // Sua mensagem especial para a pessoa amada
+        const suaMensagem = "Sua mensagem de amor personalizada aqui. Ex: 'Meu amor, cada dia ao seu lado é um presente!'";
 
-        // --- LÓGICA DE CÁLCULO E EXIBIÇÃO ---
+        // --- CONFIGURAÇÕES DO SLIDESHOW ---
+        // Lista de URLs das suas imagens.
+        // As fotos devem estar na mesma pasta do arquivo index.html no GitHub.
+        // Se as fotos estiverem em uma subpasta 'images' dentro da mesma pasta, use 'images/foto1.jpg'.
+        const images = [
+            "nome_da_sua_foto_1.jpg",  // Exemplo: "meu_amor_1.jpg"
+            "nome_da_sua_foto_2.png",  // Exemplo: "viagem_inesquecivel.png"
+            "nome_da_sua_foto_3.jpeg", // Exemplo: "melhor_dia_juntos.jpeg"
+            // Adicione mais URLs de imagens aqui, cada uma entre aspas e separada por vírgula.
+            // Certifique-se de que o nome do arquivo aqui corresponda EXATAMENTE ao nome do arquivo que você subir no GitHub.
+        ];
+        // Tempo em milissegundos para cada imagem aparecer (1000ms = 1 segundo)
+        const slideshowIntervalTime = 5000; // 5 segundos por padrão
 
-        function calcularEDisplayMensagem() {
-            const dataReferencia = new Date(dataReferenciaStr + "T00:00:00"); // Adiciona T00:00:00 para evitar problemas de fuso horário
-            const dataAtual = new Date();
+        // --- LÓGICA DE CÁLCULO E EXIBIÇÃO EM TEMPO REAL ---
 
-            // Reseta a hora para o início do dia para evitar problemas com fuso horário ou horas
-            dataReferencia.setHours(0, 0, 0, 0);
-            dataAtual.setHours(0, 0, 0, 0);
+        // Função para formatar números com zero à esquerda (ex: 5 -> 05)
+        const formatNumber = (num) => num < 10 ? '0' + num : num;
 
-            const diferencaTempo = dataAtual.getTime() - dataReferencia.getTime();
-            // Converte milissegundos para dias
-            const diferencaDias = Math.floor(diferencaTempo / (1000 * 60 * 60 * 24));
+        function updateCountdown() {
+            const startDate = new Date(dataReferenciaStr + "T00:00:00"); 
+            const now = new Date();
 
-            let mensagemContagem;
-            if (diferencaDias < 0) {
-                mensagemContagem = `Faltam ${-diferencaDias} dias para a nossa data especial!`;
-            } else if (diferencaDias > 0) {
-                mensagemContagem = `Já se passaram ${diferencaDias} dias desde a nossa data especial!`;
-            } else {
-                mensagemContagem = "Hoje é a nossa data especial! Um dia inesquecível!";
+            let diffMs = now.getTime() - startDate.getTime(); 
+            const isFutureDate = diffMs < 0;
+            diffMs = Math.abs(diffMs); 
+
+            let totalSeconds = Math.floor(diffMs / 1000);
+
+            let seconds = totalSeconds % 60;
+            let totalMinutes = Math.floor(totalSeconds / 60);
+            let minutes = totalMinutes % 60;
+            let totalHours = Math.floor(totalMinutes / 60);
+            let hours = totalHours % 24;
+            
+            // Variáveis para anos, meses, dias calculados de forma mais precisa
+            let years = 0;
+            let months = 0;
+            let days = 0; 
+
+            // Cria cópias das datas para manipulação no cálculo de anos/meses/dias
+            let tempStartDate = new Date(startDate);
+            let tempNow = new Date(now);
+
+            // Zera a hora para focar apenas nas datas para anos/meses/dias
+            tempStartDate.setHours(0,0,0,0);
+            tempNow.setHours(0,0,0,0);
+
+            if (!isFutureDate) { // Se a data de referência é no passado (já se passou tempo)
+                // Calcula anos
+                while (tempStartDate.getFullYear() < tempNow.getFullYear() ||
+                       (tempStartDate.getFullYear() === tempNow.getFullYear() && tempStartDate.getMonth() < tempNow.getMonth()) ||
+                       (tempStartDate.getFullYear() === tempNow.getFullYear() && tempStartDate.getMonth() === tempNow.getMonth() && tempStartDate.getDate() <= tempNow.getDate())) {
+                    
+                    let nextYear = new Date(tempStartDate);
+                    nextYear.setFullYear(tempStartDate.getFullYear() + 1);
+                    if (nextYear.getTime() <= tempNow.getTime()) {
+                        years++;
+                        tempStartDate = nextYear;
+                    } else {
+                        break;
+                    }
+                }
+                
+                // Calcula meses
+                while (tempStartDate.getMonth() < tempNow.getMonth() ||
+                       (tempStartDate.getMonth() === tempNow.getMonth() && tempStartDate.getDate() <= tempNow.getDate())) {
+
+                    let nextMonth = new Date(tempStartDate);
+                    nextMonth.setMonth(tempStartDate.getMonth() + 1);
+                    if (nextMonth.getTime() <= tempNow.getTime()) {
+                        months++;
+                        tempStartDate = nextMonth;
+                    } else {
+                        break;
+                    }
+                }
+                // Calcula dias restantes
+                days = Math.floor((tempNow.getTime() - tempStartDate.getTime()) / (1000 * 60 * 60 * 24));
+
+            } else { // Se a data de referência é no futuro (faltam X tempo)
+                // Lógica de "faltam" anos, meses, dias, horas, minutos, segundos
+                // Inverte a ordem das datas para o cálculo
+                let tempEndDate = new Date(startDate); // A data futura
+                let tempCurrentDate = new Date(now); // A data atual
+
+                tempEndDate.setHours(0,0,0,0);
+                tempCurrentDate.setHours(0,0,0,0);
+
+                // Calcula anos restantes
+                while (tempEndDate.getFullYear() > tempCurrentDate.getFullYear() ||
+                       (tempEndDate.getFullYear() === tempCurrentDate.getFullYear() && tempEndDate.getMonth() > tempCurrentDate.getMonth()) ||
+                       (tempEndDate.getFullYear() === tempCurrentDate.getFullYear() && tempEndDate.getMonth() === tempCurrentDate.getMonth() && tempEndDate.getDate() >= tempCurrentDate.getDate())) {
+                    
+                    let nextYear = new Date(tempEndDate);
+                    nextYear.setFullYear(tempEndDate.getFullYear() - 1);
+                    if (nextYear.getTime() >= tempCurrentDate.getTime()) {
+                        years++;
+                        tempEndDate = nextYear;
+                    } else {
+                        break;
+                    }
+                }
+
+                // Calcula meses restantes
+                while (tempEndDate.getMonth() > tempCurrentDate.getMonth() ||
+                       (tempEndDate.getMonth() === tempCurrentDate.getMonth() && tempEndDate.getDate() >= tempCurrentDate.getDate())) {
+                    
+                    let nextMonth = new Date(tempEndDate);
+                    nextMonth.setMonth(tempEndDate.getMonth() - 1);
+                    if (nextMonth.getTime() >= tempCurrentDate.getTime()) {
+                        months++;
+                        tempEndDate = nextMonth;
+                    } else {
+                        break;
+                    }
+                }
+                // Calcula dias restantes
+                days = Math.floor((tempEndDate.getTime() - tempCurrentDate.getTime()) / (1000 * 60 * 60 * 24));
             }
 
-            // Atualiza o conteúdo da página HTML
+
+            // Exibe a mensagem principal e os componentes de tempo
             document.getElementById('mensagem-especial').innerText = suaMensagem;
-            document.getElementById('contagem-dias').innerText = mensagemContagem + " Te amo mais a cada dia!";
+
+            const yearsEl = document.getElementById('years');
+            const monthsEl = document.getElementById('months');
+            const daysEl = document.getElementById('days');
+            const hoursEl = document.getElementById('hours');
+            const minutesEl = document.getElementById('minutes');
+            const secondsEl = document.getElementById('seconds');
+
+            const yearsUnitEl = document.getElementById('years-unit');
+            const monthsUnitEl = document.getElementById('months-unit');
+
+
+            yearsEl.innerText = formatNumber(years);
+            monthsEl.innerText = formatNumber(months);
+            daysEl.innerText = formatNumber(days);
+            hoursEl.innerText = formatNumber(hours);
+            minutesEl.innerText = formatNumber(minutes);
+            secondsEl.innerText = formatNumber(seconds);
+
+            yearsEl.nextElementSibling.innerText = years === 1 ? 'ano' : 'anos';
+            monthsEl.nextElementSibling.innerText = months === 1 ? 'mês' : 'meses';
+            daysEl.nextElementSibling.innerText = days === 1 ? 'dia' : 'dias';
+            hoursEl.nextElementSibling.innerText = hours === 1 ? 'hora' : 'horas';
+            minutesEl.nextElementSibling.innerText = minutes === 1 ? 'minuto' : 'minutos';
+            secondsEl.nextElementSibling.innerText = seconds === 1 ? 'segundo' : 'segundos';
+
+
+            let introMessage = "";
+            let outroMessage = " Te amo mais a cada dia!"; // Mensagem padrão para datas passadas/futuras
+
+            // Verifica se é a data exata (0 anos, 0 meses, 0 dias, 0 horas, 0 minutos, 0 segundos)
+            const isExactDate = (years === 0 && months === 0 && days === 0 && hours === 0 && minutes === 0 && seconds === 0);
+
+            if (isFutureDate) {
+                if (isExactDate) {
+                    introMessage = "Hoje é a nossa data especial! Um dia inesquecível!";
+                    outroMessage = ""; // Sem mensagem extra se for a data exata
+                    document.querySelector('.countdown-container').style.display = 'none'; // Esconde a contagem se for o dia exato
+                } else {
+                    introMessage = "Faltam ";
+                    document.querySelector('.countdown-container').style.display = 'flex'; // Garante que a contagem esteja visível
+                }
+            } else { // Data no passado
+                introMessage = "Estamos juntos há ";
+                document.querySelector('.countdown-container').style.display = 'flex'; // Garante que a contagem esteja visível
+            }
+            
+            // O parágrafo `contagem-dias` agora exibe a mensagem de introdução e a mensagem de "te amo"
+            document.getElementById('contagem-dias').innerText = introMessage + outroMessage; 
+
+            // Gerencia a visibilidade das unidades de tempo (anos, meses)
+            // Se for a data exata, todas as unidades são escondidas.
+            // Se for uma data passada, anos e meses são escondidos apenas se forem zero.
+            // Se for uma data futura (mas não a exata), todas as unidades são mostradas, mesmo se zero, para indicar o "faltam" completo.
+            if (isExactDate) { 
+                yearsUnitEl.style.display = 'none';
+                monthsUnitEl.style.display = 'none';
+                daysEl.parentElement.style.display = 'none';
+                hoursEl.parentElement.style.display = 'none';
+                minutesEl.parentElement.style.display = 'none';
+                secondsEl.parentElement.style.display = 'none';
+            } else if (!isFutureDate) { 
+                yearsUnitEl.style.display = (years === 0) ? 'none' : 'flex';
+                monthsUnitEl.style.display = (years === 0 && months === 0) ? 'none' : 'flex';
+                daysEl.parentElement.style.display = 'flex'; // Dias, horas, minutos, segundos sempre visíveis
+                hoursEl.parentElement.style.display = 'flex';
+                minutesEl.parentElement.style.display = 'flex';
+                secondsEl.parentElement.style.display = 'flex';
+            } else { // Se for futuro (e não a data exata)
+                yearsUnitEl.style.display = 'flex';
+                monthsUnitEl.style.display = 'flex';
+                daysEl.parentElement.style.display = 'flex';
+                hoursEl.parentElement.style.display = 'flex';
+                minutesEl.parentElement.style.display = 'flex';
+                secondsEl.parentElement.style.display = 'flex';
+            }
         }
 
-        // Chama a função quando a página é carregada
-        calcularEDisplayMensagem();
+        // --- Lógica do Slideshow ---
+        let slideIndex = 0;
+        let slideshowImages = []; // Armazenará os elementos <img> que serão criados
+
+        function showSlides() {
+            // Esconde todas as imagens
+            for (let i = 0; i < slideshowImages.length; i++) {
+                slideshowImages[i].classList.remove('active');
+            }
+            // Mostra a imagem atual
+            slideshowImages[slideIndex].classList.add('active');
+            
+            // Avança para a próxima imagem
+            slideIndex++;
+            if (slideIndex >= slideshowImages.length) {
+                slideIndex = 0; // Volta para a primeira imagem quando chegar ao final
+            }
+        }
+
+        // Função para inicializar o slideshow
+        function initializeSlideshow() {
+            const slideshowContainer = document.querySelector('.slideshow-container');
+            
+            // Adiciona as imagens ao HTML
+            images.forEach(src => {
+                const img = document.createElement('img');
+                img.src = src; // Define o caminho da imagem
+                img.classList.add('slideshow-image'); // Adiciona a classe CSS
+                slideshowContainer.appendChild(img); // Adiciona a imagem ao contêiner
+                slideshowImages.push(img); // Armazena a referência para a imagem
+            });
+
+            if (slideshowImages.length > 0) {
+                showSlides(); // Mostra a primeira imagem imediatamente
+                // Inicia o slideshow automático com o intervalo definido
+                setInterval(showSlides, slideshowIntervalTime);
+            }
+        }
+
+        // Inicializa a contagem regressiva/progressiva quando a página carrega
+        updateCountdown();
+        // Configura a atualização da contagem a cada 1 segundo
+        setInterval(updateCountdown, 1000); 
+
+        // Carrega o slideshow depois que o conteúdo DOM estiver completamente carregado
+        document.addEventListener('DOMContentLoaded', initializeSlideshow);
     </script>
 </body>
 </html>
