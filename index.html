@@ -20,7 +20,7 @@
             overflow-x: hidden; /* Evita rolagem horizontal */
         }
         .container {
-            background-color: rgba(255, 255, 255, 0.85); /* Agora com transparência */
+            background-color: rgba(255, 255, 255, 0.50); /* Agora com transparência */
             padding: 30px 40px;
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -52,7 +52,7 @@
             font-size: 1.25em; /* Ligeiramente maior para destacar */
         }
 
-        /* NOVO ESTILO: Para a cor do texto da assinatura */
+        /* Estilo para a cor do texto da assinatura */
         #assinatura {
             color: #d147a3; /* Você pode usar a mesma cor do título ou outra de sua preferência */
             font-size: 0.9em; /* Mantém o tamanho original, mas agora no CSS */
@@ -179,6 +179,33 @@
 
         <p id="contagem-dias"> 
             </p>
+
+        <div class="countdown-container">
+            <div class="time-unit" id="years-unit">
+                <span id="years">00</span>
+                <span class="label">anos</span>
+            </div>
+            <div class="time-unit" id="months-unit">
+                <span id="months">00</span>
+                <span class="label">meses</span>
+            </div>
+            <div class="time-unit" id="days-unit">
+                <span id="days">00</span>
+                <span class="label">dias</span>
+            </div>
+            <div class="time-unit" id="hours-unit">
+                <span id="hours">00</span>
+                <span class="label">horas</span>
+            </div>
+            <div class="time-unit" id="minutes-unit">
+                <span id="minutes">00</span>
+                <span class="label">minutos</span>
+            </div>
+            <div class="time-unit" id="seconds-unit">
+                <span id="seconds">00</span>
+                <span class="label">segundos</span>
+            </div>
+        </div>
 
         <p id="assinatura" style="margin-top: 30px; font-size: 0.9em;">
             Com carinho, do seu amor, [Seu Nome].
@@ -310,37 +337,42 @@
                                  now.getMonth() === startDate.getMonth() &&
                                  now.getDate() === startDate.getDate());
 
-            if (isFutureDate) { 
+            // Esta lógica decide qual mensagem de tempo exibir e se o contador deve aparecer
+            if (isFutureDate) { // Se a data de referência (2025-01-01) é no futuro em relação à data atual (ela não é, então este bloco não deve ser executado no momento)
                 if (isExactDate && (hours + minutes + seconds === 0)) {
                     mensagemFinal = "Hoje é a nossa data especial! Um dia inesquecível!";
-                    document.querySelector('.countdown-container').style.display = 'none';
+                    document.querySelector('.countdown-container').style.display = 'none'; // Esconde o contador
                 } else {
                     if (years > 0) { contagemTexto += years + (years === 1 ? ' ano' : ' anos'); if (months > 0 && days > 0) contagemTexto += ", "; else if (months > 0 || days > 0) contagemTexto += " e "; }
                     if (months > 0) { contagemTexto += months + (months === 1 ? ' mês' : ' meses'); if (days > 0) contagemTexto += " e "; }
                     if (days > 0 || (years === 0 && months === 0 && (hours > 0 || minutes > 0 || seconds > 0))) { contagemTexto += days + (days === 1 ? ' dia' : ' dias'); } else if (years === 0 && months === 0 && days === 0) { contagemTexto += ""; }
                     mensagemFinal = "Faltam " + contagemTexto + "!";
-                    document.querySelector('.countdown-container').style.display = 'flex';
+                    document.querySelector('.countdown-container').style.display = 'flex'; // Mostra o contador
                 }
-            } else { 
+            } else { // Este bloco é executado porque 2025-01-01 é no passado em relação à data atual
                 if (years > 0) { contagemTexto += years + (years === 1 ? ' ano' : ' anos'); if (months > 0 && days > 0) contagemTexto += ", "; else if (months > 0 || days > 0) contagemTexto += " e "; }
                 if (months > 0) { contagemTexto += months + (months === 1 ? ' mês' : ' meses'); if (days > 0) contagemTexto += " e "; }
                 if (days > 0 || (years === 0 && months === 0 && (hours > 0 || minutes > 0 || seconds > 0))) { contagemTexto += days + (days === 1 ? ' dia' : ' dias'); } else if (years === 0 && months === 0 && days === 0) { contagemTexto += ""; }
                
                 mensagemFinal = "Estamos juntos há " + contagemTexto + ". Te amo mais a cada dia!";
-                document.querySelector('.countdown-container').style.display = 'flex';
+                document.querySelector('.countdown-container').style.display = 'flex'; // GARANTIDO: o contador é exibido aqui
             }
             
             document.getElementById('contagem-dias').innerText = mensagemFinal; 
 
-            if (isExactDate && (hours + minutes + seconds === 0)) { 
+            // Gerencia a visibilidade das unidades de tempo (anos, meses, dias)
+            // Esta parte mostra ou esconde as caixinhas individuais com base nos valores
+            if (isExactDate && (hours + minutes + seconds === 0)) { // Esta condição só é verdadeira na data exata
                 yearsUnitEl.style.display = 'none';
                 monthsUnitEl.style.display = 'none';
                 daysEl.parentElement.style.display = 'none';
                 hoursEl.parentElement.style.display = 'none';
                 minutesEl.parentElement.style.display = 'none';
                 secondsEl.parentElement.style.display = 'none';
-            } else { 
+            } else { // Para todas as outras datas (que é o caso agora)
+                // Certifica-se de que o container principal esteja visível
                 document.querySelector('.countdown-container').style.display = 'flex';
+                // E então ajusta a visibilidade das unidades individuais
                 yearsUnitEl.style.display = (years > 0) ? 'flex' : 'none';
                 monthsUnitEl.style.display = (months > 0 || years > 0) ? 'flex' : 'none';
                 daysEl.parentElement.style.display = 'flex'; 
@@ -348,6 +380,12 @@
                 minutesEl.parentElement.style.display = 'flex';
                 secondsEl.parentElement.style.display = 'flex';
             }
+
+            // Para depuração: Verifique isso no console do seu navegador (F12)
+            console.log("updateCountdown executado. Mensagem: ", mensagemFinal);
+            console.log("Contador visível?", document.querySelector('.countdown-container').style.display);
+            console.log(`Anos: ${years}, Meses: ${months}, Dias: ${days}, Horas: ${hours}, Minutos: ${minutes}, Segundos: ${seconds}`);
+
         }
 
         // --- Lógica do Slideshow ---
