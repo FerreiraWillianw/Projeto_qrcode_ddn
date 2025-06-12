@@ -83,41 +83,52 @@
 
         /* Estilos do Slideshow */
         .slideshow-container {
-            position: absolute; /* Posiciona o slideshow atrás do conteúdo principal */
-            top: 50%; /* Centraliza verticalmente */
-            left: 50%; /* Centraliza horizontalmente */
-            transform: translate(-50%, -50%); /* Ajusta para centralizar exatamente */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             
-            /* Diminuir o tamanho das imagens do carrossel */
-            width: 80vw; /* 80% da largura da viewport */
-            max-width: 900px; /* Limita a largura máxima */
-            height: 60vh; /* 60% da altura da viewport */
-            max-height: 500px; /* Limita a altura máxima */
+            /* Ajuste o tamanho do container para uma proporção mais widescreen */
+            width: 85vw; /* Maior para acomodar as fotos horizontais */
+            max-width: 900px;
+            
+            /* Usamos padding-top para manter a proporção, por exemplo, 56.25% para 16:9 */
+            /* Isso faz com que a altura seja 56.25% da largura, mantendo a proporção 16:9 */
+            padding-top: 48vw; /* 48% da largura para uma proporção próxima a 16:9 */
+            max-height: 500px; /* Limita a altura máxima para não ficar gigante */
             
             overflow: hidden;
-            z-index: 0; /* Garante que fique no fundo */
-            
-            /* Arredondar os cantos do container do slideshow */
-            border-radius: 25px; /* Aumentado o valor para cantos mais arredondados */
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Adiciona uma sombra para destaque */
+            z-index: 0;
+            border-radius: 25px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            background-color: rgba(0, 0, 0, 0.1); /* Um fundo sutil para o espaço vazio */
         }
+
         .slideshow-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Cobre o container sem distorcer, cortando se necessário */
             position: absolute;
             top: 0;
             left: 0;
-            opacity: 0; /* Inicialmente invisível */
-            transition: opacity 1.5s ease-in-out; /* Transição suave */
-            filter: brightness(0.6) blur(1px); /* Escurece mais e diminui o blur para um efeito mais nítido, mas ainda sutil */
-            transform: scale(1.02); /* Pequeno zoom para preencher melhor */
+            width: 100%;
+            height: 100%;
             
-            /* Arredondar os cantos das imagens (importante para consistência) */
-            border-radius: 25px; /* Mesmo valor do container */
+            /* MUDANÇA PRINCIPAL AQUI: object-fit para 'contain' */
+            /* Isso redimensiona a imagem para caber completamente no contêiner, mantendo sua proporção */
+            /* Pode deixar barras pretas (ou da cor do background-color do container) nas laterais ou em cima/baixo se a proporção não for exata */
+            object-fit: contain; 
+            
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            filter: brightness(0.6); /* Sem blur para mais nitidez, apenas escurecimento */
+            
+            /* Adicionado para centralizar a imagem dentro do seu espaço */
+            display: block; /* Garante que as margens funcionem */
+            margin: auto; /* Centraliza a imagem se ela não preencher 100% (devido a object-fit: contain) */
+
+            /* Arredondar os cantos das imagens, mas pode ter um efeito menos visível com 'contain' */
+            border-radius: 20px; /* Ligeiramente menor para evitar problemas de renderização com contain */
         }
         .slideshow-image.active {
-            opacity: 1; /* Ativa a imagem */
+            opacity: 1;
         }
 
         /* Estilo para telas menores */
@@ -137,12 +148,12 @@
                 padding: 8px 12px;
             }
             .slideshow-container {
-                width: 95vw; /* Ocupa mais espaço em telas pequenas */
-                height: 40vh; /* Altura ajustada */
-                border-radius: 15px; /* Menos arredondado em telas pequenas, se preferir */
+                width: 95vw;
+                padding-top: 60vw; /* Adapta a proporção para telas menores, pode precisar de ajuste */
+                border-radius: 15px;
             }
             .slideshow-image {
-                border-radius: 15px; /* Correspondente ao container em telas pequenas */
+                border-radius: 10px; /* Menor arredondamento em telas pequenas */
             }
         }
     </style>
