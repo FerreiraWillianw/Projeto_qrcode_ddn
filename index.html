@@ -20,7 +20,7 @@
             overflow-x: hidden; /* Evita rolagem horizontal */
         }
         .container {
-            background-color: rgba(255, 255, 255, 0.50); /* Agora com transparência */
+            background-color: rgba(255, 255, 255, 0.85); /* Agora com transparência */
             padding: 30px 40px;
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -179,8 +179,11 @@
         // --- CONFIGURAÇÕES DA PÁGINA (JavaScript) ---
 
         // A data de referência para a contagem (AAAA-MM-DD)
-        // Por exemplo: "2018-05-06" para 6 de maio de 2018
-        const dataReferenciaStr = "2024-06-12"; // EXEMPLO: Use uma data mais antiga para testar anos/meses
+        // Exemplo: "2024-06-12" (hoje) para testar 0 anos, 0 meses
+        // Exemplo: "2024-05-12" (1 mês atrás) para testar 1 mês
+        // Exemplo: "2023-06-12" (1 ano atrás) para testar 1 ano
+        // Exemplo: "2023-05-12" (1 ano e 1 mês atrás)
+        const dataReferenciaStr = "2024-05-20"; // Altere aqui para testar
 
         // Sua mensagem especial para a pessoa amada
         const suaMensagem = "Meu amor, cada dia ao seu lado é um presente que celebro com todo o meu coração!";
@@ -215,87 +218,93 @@
 
             let diffMs = now.getTime() - startDate.getTime(); 
             const isFutureDate = diffMs < 0;
-            diffMs = Math.abs(diffMs); 
+            diffMs = Math.abs(diffMs); // Trabalha com a diferença absoluta para calcular os intervalos
 
-            let totalSeconds = Math.floor(diffMs / 1000);
-
-            let seconds = totalSeconds % 60;
-            let totalMinutes = Math.floor(totalSeconds / 60);
-            let minutes = totalMinutes % 60;
-            let totalHours = Math.floor(totalMinutes / 60);
-            let hours = totalHours % 24;
+            // Calcula segundos, minutos e horas a partir do total de milissegundos
+            let seconds = Math.floor((diffMs / 1000) % 60);
+            let minutes = Math.floor((diffMs / (1000 * 60)) % 60);
+            let hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
             
-            let totalDays = Math.floor(totalHours / 24); // Calcule o total de dias primeiro
-
             let years = 0;
             let months = 0;
-            let days = totalDays; // Inicializa days com o total de dias para o cálculo modular
+            let days = 0;
 
-
-            // --- NOVA LÓGICA PARA ANOS E MESES ---
+            // --- LÓGICA DE CÁLCULO DE ANOS, MESES E DIAS (Mais Robusta) ---
             if (!isFutureDate) { // Se a data de referência é no passado
-                let tempDate = new Date(startDate);
-                years = 0;
-                months = 0;
+                let tempCurrent = new Date(startDate); // Começa na data de referência
+                
+                // Calcula Anos
+                while (tempCurrent.getFullYear() < now.getFullYear() ||
+                       (tempCurrent.getFullYear() === now.getFullYear() && tempCurrent.getMonth() < now.getMonth()) ||
+                       (tempCurrent.getFullYear() === now.getFullYear() && tempCurrent.getMonth() === now.getMonth() && tempCurrent.getDate() <= now.getDate())) {
+                    
+                    let nextYearCandidate = new Date(tempCurrent);
+                    nextYearCandidate.setFullYear(tempCurrent.getFullYear() + 1);
 
-                // Calcula anos
-                while (true) {
-                    let nextYear = new Date(tempDate);
-                    nextYear.setFullYear(tempDate.getFullYear() + 1);
-                    if (nextYear.getTime() <= now.getTime()) {
+                    if (nextYearCandidate.getTime() <= now.getTime()) {
                         years++;
-                        tempDate = nextYear;
+                        tempCurrent = nextYearCandidate; // Avança a data base para o próximo ano
                     } else {
-                        break;
+                        break; // Não pode adicionar um ano completo
                     }
                 }
 
-                // Calcula meses restantes após os anos
-                while (true) {
-                    let nextMonth = new Date(tempDate);
-                    nextMonth.setMonth(tempDate.getMonth() + 1);
-                    if (nextMonth.getTime() <= now.getTime()) {
+                // Calcula Meses (partindo da data ajustada pelos anos)
+                while (tempCurrent.getMonth() < now.getMonth() ||
+                       (tempCurrent.getMonth() === now.getMonth() && tempCurrent.getDate() <= now.getDate())) {
+                    
+                    let nextMonthCandidate = new Date(tempCurrent);
+                    nextMonthCandidate.setMonth(tempCurrent.getMonth() + 1);
+
+                    if (nextMonthCandidate.getTime() <= now.getTime()) {
                         months++;
-                        tempDate = nextMonth;
+                        tempCurrent = nextMonthCandidate; // Avança a data base para o próximo mês
                     } else {
-                        break;
+                        break; // Não pode adicionar um mês completo
                     }
                 }
-                // Calcula dias restantes após os anos e meses
-                days = Math.floor((now.getTime() - tempDate.getTime()) / (1000 * 60 * 60 * 24));
+                
+                // Calcula Dias (o que sobrou, partindo da data ajustada pelos anos e meses)
+                days = Math.floor((now.getTime() - tempCurrent.getTime()) / (1000 * 60 * 60 * 24));
 
-            } else { // Se a data de referência é no futuro
-                let tempDate = new Date(now); // Começa do agora para contar até a data futura
-                years = 0;
-                months = 0;
+            } else { // Se a data de referência é no futuro (contagem regressiva)
+                let tempCurrent = new Date(now); // Começa na data atual
+                
+                // Calcula Anos
+                while (tempCurrent.getFullYear() < startDate.getFullYear() ||
+                       (tempCurrent.getFullYear() === startDate.getFullYear() && tempCurrent.getMonth() < startDate.getMonth()) ||
+                       (tempCurrent.getFullYear() === startDate.getFullYear() && tempCurrent.getMonth() === startDate.getMonth() && tempCurrent.getDate() <= startDate.getDate())) {
+                    
+                    let nextYearCandidate = new Date(tempCurrent);
+                    nextYearCandidate.setFullYear(tempCurrent.getFullYear() + 1);
 
-                // Calcula anos
-                while (true) {
-                    let nextYear = new Date(tempDate);
-                    nextYear.setFullYear(tempDate.getFullYear() + 1);
-                    if (nextYear.getTime() <= startDate.getTime()) { // Compara com a data futura
+                    if (nextYearCandidate.getTime() <= startDate.getTime()) {
                         years++;
-                        tempDate = nextYear;
+                        tempCurrent = nextYearCandidate;
                     } else {
                         break;
                     }
                 }
 
-                // Calcula meses restantes após os anos
-                while (true) {
-                    let nextMonth = new Date(tempDate);
-                    nextMonth.setMonth(tempDate.getMonth() + 1);
-                    if (nextMonth.getTime() <= startDate.getTime()) { // Compara com a data futura
+                // Calcula Meses
+                while (tempCurrent.getMonth() < startDate.getMonth() ||
+                       (tempCurrent.getMonth() === startDate.getMonth() && tempCurrent.getDate() <= startDate.getDate())) {
+                    
+                    let nextMonthCandidate = new Date(tempCurrent);
+                    nextMonthCandidate.setMonth(tempCurrent.getMonth() + 1);
+
+                    if (nextMonthCandidate.getTime() <= startDate.getTime()) {
                         months++;
-                        tempDate = nextMonth;
+                        tempCurrent = nextMonthCandidate;
                     } else {
                         break;
                     }
                 }
-                // Calcula dias restantes após os anos e meses
-                days = Math.floor((startDate.getTime() - tempDate.getTime()) / (1000 * 60 * 60 * 24));
+                
+                // Calcula Dias
+                days = Math.floor((startDate.getTime() - tempCurrent.getTime()) / (1000 * 60 * 60 * 24));
             }
-            // --- FIM DA NOVA LÓGICA PARA ANOS E MESES ---
+            // --- FIM DA NOVA LÓGICA DE CÁLCULO DE ANOS, MESES E DIAS ---
 
 
             // Exibe a mensagem principal e os componentes de tempo
@@ -337,20 +346,23 @@
                                  now.getDate() === startDate.getDate());
 
             if (isFutureDate) { // Se a data de referência é no futuro
-                if (isExactDate) { // Se a data de referência é hoje (mas ainda no futuro da contagem)
+                if (isExactDate && (hours + minutes + seconds === 0)) { // Considera a data E hora 00:00:00
                     mensagemFinal = "Hoje é a nossa data especial! Um dia inesquecível!";
                     document.querySelector('.countdown-container').style.display = 'none';
                 } else {
                     // Constrói a mensagem "Faltam X anos, Y meses, Z dias..."
                     if (years > 0) {
                         contagemTexto += years + (years === 1 ? ' ano' : ' anos');
-                        if (months > 0 || days > 0) contagemTexto += ", ";
+                        if (months > 0 && days > 0) contagemTexto += ", ";
+                        else if (months > 0 || days > 0) contagemTexto += " e ";
                     }
                     if (months > 0) {
                         contagemTexto += months + (months === 1 ? ' mês' : ' meses');
                         if (days > 0) contagemTexto += " e ";
                     }
-                    contagemTexto += days + (days === 1 ? ' dia' : ' dias'); 
+                    if (days > 0 || (years === 0 && months === 0)) { // Sempre mostra dias se não houver anos/meses
+                        contagemTexto += days + (days === 1 ? ' dia' : ' dias'); 
+                    }
 
                     mensagemFinal = "Faltam " + contagemTexto + "!";
                     document.querySelector('.countdown-container').style.display = 'flex';
@@ -359,13 +371,17 @@
                 // Constrói a mensagem "Estamos juntos há X anos, Y meses, Z dias..."
                 if (years > 0) {
                     contagemTexto += years + (years === 1 ? ' ano' : ' anos');
-                    if (months > 0 || days > 0) contagemTexto += ", ";
+                    if (months > 0 && days > 0) contagemTexto += ", ";
+                    else if (months > 0 || days > 0) contagemTexto += " e ";
                 }
                 if (months > 0) {
                     contagemTexto += months + (months === 1 ? ' mês' : ' meses');
                     if (days > 0) contagemTexto += " e ";
                 }
-                contagemTexto += days + (days === 1 ? ' dia' : ' dias'); 
+                if (days > 0 || (years === 0 && months === 0)) { // Sempre mostra dias se não houver anos/meses
+                     contagemTexto += days + (days === 1 ? ' dia' : ' dias'); 
+                }
+               
 
                 mensagemFinal = "Estamos juntos há " + contagemTexto + ". Te amo mais a cada dia!";
                 document.querySelector('.countdown-container').style.display = 'flex';
@@ -375,9 +391,9 @@
             // --- FIM DA ALTERAÇÃO PARA MELHORAR A MENSAGEM DE TEMPO ---
 
 
-            // Gerencia a visibilidade das unidades de tempo (anos, meses)
-            // Lógica para ocultar "anos" e "meses" se forem zero ou não relevantes para o período
-            if (isExactDate) { // Se for a data exata, esconde tudo
+            // Gerencia a visibilidade das unidades de tempo (anos, meses, dias)
+            // Lógica para ocultar "anos" e "meses" se forem zero.
+            if (isExactDate && (hours + minutes + seconds === 0)) { // Se for a data exata (e hora), esconde tudo
                 yearsUnitEl.style.display = 'none';
                 monthsUnitEl.style.display = 'none';
                 daysEl.parentElement.style.display = 'none';
@@ -392,11 +408,12 @@
                 yearsUnitEl.style.display = (years > 0) ? 'flex' : 'none';
                 
                 // Meses: Mostrar se houver meses (months > 0) OU se houver anos (years > 0)
-                // Isso garante que "X anos e 00 meses" ou "00 anos e Y meses" apareça corretamente, e que meses apareça se o ano for 0 mas houver meses.
                 monthsUnitEl.style.display = (months > 0 || years > 0) ? 'flex' : 'none';
                 
-                // Dias, Horas, Minutos, Segundos: Sempre mostrar, a menos que anos e meses já tenham absorvido todo o tempo
-                // (Para manter a contagem em tempo real, estes devem aparecer)
+                // Dias: Mostrar se houver dias (days > 0) OU se não houver anos nem meses
+                // Ou seja, sempre mostrar dias, a menos que anos e meses já preencham a contagem.
+                // Mas, para o propósito de mostrar o "tempo restante" em detalhe,
+                // vamos manter os dias/horas/min/seg sempre visíveis se a data não for exata.
                 daysEl.parentElement.style.display = 'flex'; 
                 hoursEl.parentElement.style.display = 'flex';
                 minutesEl.parentElement.style.display = 'flex';
