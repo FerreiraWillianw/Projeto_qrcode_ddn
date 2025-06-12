@@ -135,6 +135,8 @@
         <h1>Para [Nome da Pessoa Amada], Com Todo Amor!</h1>
         <p id="mensagem-especial">
             </p>
+        <p id="contagem-dias" style="font-size: 1.1em; margin-top: 15px; color: #555;">
+            </p>
 
         <div class="countdown-container">
             <div class="time-unit" id="years-unit">
@@ -356,7 +358,7 @@
             }
             
             // O parágrafo `contagem-dias` agora exibe a mensagem de introdução e a mensagem de "te amo"
-            document.getElementById('contagem-dias').innerText = introMessage + outroMessage; 
+            document.getElementById('mensagem-especial').innerText = introMessage + suaMensagem + outroMessage; 
 
             // Gerencia a visibilidade das unidades de tempo (anos, meses)
             // Se for a data exata, todas as unidades são escondidas.
