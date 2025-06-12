@@ -20,7 +20,7 @@
             overflow-x: hidden; /* Evita rolagem horizontal */
         }
         .container {
-            background-color: rgba(255, 255, 255, 0.50); /* Agora com transparência */
+            background-color: rgba(255, 255, 255, 0.85); /* Agora com transparência */
             padding: 30px 40px;
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -84,12 +84,22 @@
         /* Estilos do Slideshow */
         .slideshow-container {
             position: absolute; /* Posiciona o slideshow atrás do conteúdo principal */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 50%; /* Centraliza verticalmente */
+            left: 50%; /* Centraliza horizontalmente */
+            transform: translate(-50%, -50%); /* Ajusta para centralizar exatamente */
+            
+            /* Diminuir o tamanho das imagens do carrossel */
+            width: 80vw; /* 80% da largura da viewport */
+            max-width: 900px; /* Limita a largura máxima */
+            height: 60vh; /* 60% da altura da viewport */
+            max-height: 500px; /* Limita a altura máxima */
+            
             overflow: hidden;
             z-index: 0; /* Garante que fique no fundo */
+            
+            /* Arredondar os cantos do container do slideshow */
+            border-radius: 25px; /* Aumentado o valor para cantos mais arredondados */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Adiciona uma sombra para destaque */
         }
         .slideshow-image {
             width: 100%;
@@ -100,11 +110,11 @@
             left: 0;
             opacity: 0; /* Inicialmente invisível */
             transition: opacity 1.5s ease-in-out; /* Transição suave */
-            filter: brightness(0.7) blur(2px); /* Escurece e borra um pouco para o texto se destacar */
-            /* Para deixar as fotos mais nítidas, remova ou diminua o 'blur' acima, por exemplo: */
-            /* filter: brightness(0.7); */
-            /* filter: brightness(0.7) blur(1px); */
-            transform: scale(1.05); /* Pequeno zoom para preencher melhor */
+            filter: brightness(0.6) blur(1px); /* Escurece mais e diminui o blur para um efeito mais nítido, mas ainda sutil */
+            transform: scale(1.02); /* Pequeno zoom para preencher melhor */
+            
+            /* Arredondar os cantos das imagens (importante para consistência) */
+            border-radius: 25px; /* Mesmo valor do container */
         }
         .slideshow-image.active {
             opacity: 1; /* Ativa a imagem */
@@ -125,6 +135,14 @@
                 font-size: 1.4em;
                 min-width: 60px;
                 padding: 8px 12px;
+            }
+            .slideshow-container {
+                width: 95vw; /* Ocupa mais espaço em telas pequenas */
+                height: 40vh; /* Altura ajustada */
+                border-radius: 15px; /* Menos arredondado em telas pequenas, se preferir */
+            }
+            .slideshow-image {
+                border-radius: 15px; /* Correspondente ao container em telas pequenas */
             }
         }
     </style>
@@ -183,7 +201,7 @@
         // Exemplo: "2024-05-12" (1 mês atrás) para testar 1 mês
         // Exemplo: "2023-06-12" (1 ano atrás) para testar 1 ano
         // Exemplo: "2023-05-12" (1 ano e 1 mês atrás)
-        const dataReferenciaStr = "2025-01-01"; // Altere aqui para testar
+        const dataReferenciaStr = "2024-05-20"; // Altere aqui para testar
 
         // Sua mensagem especial para a pessoa amada
         const suaMensagem = "Meu amor, cada dia ao seu lado é um presente que celebro com todo o meu coração!";
@@ -360,8 +378,10 @@
                         contagemTexto += months + (months === 1 ? ' mês' : ' meses');
                         if (days > 0) contagemTexto += " e ";
                     }
-                    if (days > 0 || (years === 0 && months === 0)) { // Sempre mostra dias se não houver anos/meses
+                    if (days > 0 || (years === 0 && months === 0 && (hours > 0 || minutes > 0 || seconds > 0))) { // Sempre mostra dias se não houver anos/meses ou se houver tempo restante menor que 1 dia
                         contagemTexto += days + (days === 1 ? ' dia' : ' dias'); 
+                    } else if (years === 0 && months === 0 && days === 0) { // Se for menos de um dia
+                         contagemTexto += ""; // Deixa vazio para não aparecer "0 dias"
                     }
 
                     mensagemFinal = "Faltam " + contagemTexto + "!";
@@ -378,11 +398,12 @@
                     contagemTexto += months + (months === 1 ? ' mês' : ' meses');
                     if (days > 0) contagemTexto += " e ";
                 }
-                if (days > 0 || (years === 0 && months === 0)) { // Sempre mostra dias se não houver anos/meses
+                if (days > 0 || (years === 0 && months === 0 && (hours > 0 || minutes > 0 || seconds > 0))) { // Sempre mostra dias se não houver anos/meses ou se houver tempo restante menor que 1 dia
                      contagemTexto += days + (days === 1 ? ' dia' : ' dias'); 
+                } else if (years === 0 && months === 0 && days === 0) { // Se for menos de um dia
+                     contagemTexto += ""; // Deixa vazio para não aparecer "0 dias"
                 }
                
-
                 mensagemFinal = "Estamos juntos há " + contagemTexto + ". Te amo mais a cada dia!";
                 document.querySelector('.countdown-container').style.display = 'flex';
             }
