@@ -49,10 +49,6 @@
         #mensagem-especial { /* Estilo para a mensagem principal */
             color: #d147a3;
             font-weight: bold;
-            /* text-shadow: -1px -1px 0 #000, 
-                         1px -1px 0 #000,
-                         -1px 1px 0 #000,
-                         1px 1px 0 #000; */
         }
         
         #contagem-dias {
@@ -238,16 +234,16 @@
 <body>
     <div class="slideshow-container" id="slideshowContainer">
         <span class="close-btn" id="closeSlideshowBtn">&times;</span>
-        </div>
+    </div>
 
     <div class="container">
         <span class="heart">❤️</span>
         <h1>Para Analice, com amor!</h1>
         <p id="mensagem-especial">
-            </p>
+        </p>
 
         <p id="contagem-dias"> 
-            </p>
+        </p>
 
         <div class="countdown-container">
             <div class="time-unit" id="years-unit">
@@ -282,17 +278,16 @@
         <span class="heart">❤️</span>
 
         <button id="openSlideshowBtn">Nossa história!</button>
-
     </div>
 
     <script>
         // --- CONFIGURAÇÕES DA PÁGINA (JavaScript) ---
 
         // A data de referência para a contagem (AAAA-MM-DD)
-        const dataReferenciaStr = "2024-09-26"; // DATA FIXA: 1 de Janeiro de 2025
+        const dataReferenciaStr = "2024-09-26"; 
 
         // Sua mensagem especial para a pessoa amada
-        const suaMensagem = "Feliz Dia dos Namorados, minha vida! Nossa história é a mais linda que eu poderia sonhar, e cada dia ao seu lado é um presente para mim. Que o nosso amor continue crescendo e nos fazendo transbordar felicidade e companheirismo. Você é e sempre será meu grande amor, obrigado por ser quem é e me ajudar a melhorar a  cada dia! Te amo biri!!";
+        const suaMensagem = "Feliz Dia dos Namorados, minha vida! Nossa história é a mais linda que eu poderia sonhar, e cada dia ao seu lado é um presente para mim. Que o nosso amor continue crescendo e nos fazendo transbordar felicidade e companheirismo. Você é e sempre será meu grande amor, obrigado por ser quem é e me ajudar a melhorar a cada dia! Te amo biri!!";
 
         // --- CONFIGURAÇÕES DO SLIDESHOW ---
         const images = [
@@ -304,8 +299,12 @@
             "nosso_amor_6.jpeg",
             "nosso_amor_7.jpeg",
             "nosso_amor_8.jpeg", 
+            "image_88b2b8.png", // Imagens adicionadas
+            "image_87dca1.png",
+            "image_87cdd7.png",
+            "image_87bef5.png"
         ];
-        const slideshowIntervalTime = 3000; // 5 segundos por padrão
+        const slideshowIntervalTime = 3000; // 3 segundos por padrão
         let currentSlideshowInterval; // Variável para controlar o intervalo do slideshow
 
         // --- LÓGICA DE CÁLCULO E EXIBIÇÃO EM TEMPO REAL ---
@@ -317,8 +316,8 @@
             const now = new Date();
 
             let diffMs = now.getTime() - startDate.getTime(); 
-            const isFutureDate = diffMs < 0;
-            diffMs = Math.abs(diffMs);
+            const isFutureDate = diffMs < 0; // Verifica se a data de referência é no futuro
+            diffMs = Math.abs(diffMs); // Usa o valor absoluto da diferença para os cálculos
 
             let seconds = Math.floor((diffMs / 1000) % 60);
             let minutes = Math.floor((diffMs / (1000 * 60)) % 60);
@@ -328,52 +327,79 @@
             let months = 0;
             let days = 0;
 
-            if (!isFutureDate) { 
-                let tempCurrent = new Date(startDate); 
-                while (tempCurrent.getFullYear() < now.getFullYear() ||
-                       (tempCurrent.getFullYear() === now.getFullYear() && tempCurrent.getMonth() < now.getMonth()) ||
-                       (tempCurrent.getFullYear() === now.getFullYear() && tempCurrent.getMonth() === now.getMonth() && tempCurrent.getDate() <= now.getDate())) {
-                    let nextYearCandidate = new Date(tempCurrent);
-                    nextYearCandidate.setFullYear(tempCurrent.getFullYear() + 1);
-                    if (nextYearCandidate.getTime() <= now.getTime()) {
-                        years++;
-                        tempCurrent = nextYearCandidate;
-                    } else { break; }
-                }
-                while (tempCurrent.getMonth() < now.getMonth() ||
-                       (tempCurrent.getMonth() === now.getMonth() && tempCurrent.getDate() <= now.getDate())) {
-                    let nextMonthCandidate = new Date(tempCurrent);
-                    nextMonthCandidate.setMonth(tempCurrent.getMonth() + 1);
-                    if (nextMonthCandidate.getTime() <= now.getTime()) {
-                        months++;
-                        tempCurrent = nextMonthCandidate;
-                    } else { break; }
-                }
-                days = Math.floor((now.getTime() - tempCurrent.getTime()) / (1000 * 60 * 60 * 24));
+            // Lógica para calcular anos, meses e dias de forma exata, considerando o fluxo do tempo
+            // Esta parte foi ajustada para lidar com datas passadas corretamente
+            if (!isFutureDate) { // Se a data de referência é no passado (ou hoje)
+                let tempCurrent = new Date(startDate);
+                let currentYears = 0;
+                let currentMonths = 0;
+                let currentDays = 0;
 
-            } else { 
-                let tempCurrent = new Date(now); 
-                while (tempCurrent.getFullYear() < startDate.getFullYear() ||
-                       (tempCurrent.getFullYear() === startDate.getFullYear() && tempCurrent.getMonth() < startDate.getMonth()) ||
-                       (tempCurrent.getFullYear() === startDate.getFullYear() && tempCurrent.getMonth() === startDate.getMonth() && tempCurrent.getDate() <= startDate.getDate())) {
+                while (tempCurrent.getTime() <= now.getTime()) {
                     let nextYearCandidate = new Date(tempCurrent);
                     nextYearCandidate.setFullYear(tempCurrent.getFullYear() + 1);
-                    if (nextYearCandidate.getTime() <= startDate.getTime()) {
-                        years++;
+
+                    if (nextYearCandidate.getTime() <= now.getTime()) {
+                        currentYears++;
                         tempCurrent = nextYearCandidate;
-                    } else { break; }
+                    } else {
+                        break;
+                    }
                 }
-                while (tempCurrent.getMonth() < startDate.getMonth() ||
-                       (tempCurrent.getMonth() === startDate.getMonth() && tempCurrent.getDate() <= startDate.getDate())) {
+                
+                while (tempCurrent.getTime() <= now.getTime()) {
                     let nextMonthCandidate = new Date(tempCurrent);
                     nextMonthCandidate.setMonth(tempCurrent.getMonth() + 1);
-                    if (nextMonthCandidate.getTime() <= startDate.getTime()) {
-                        months++;
+
+                    if (nextMonthCandidate.getTime() <= now.getTime()) {
+                        currentMonths++;
                         tempCurrent = nextMonthCandidate;
-                    } else { break; }
+                    } else {
+                        break;
+                    }
                 }
-                days = Math.floor((startDate.getTime() - tempCurrent.getTime()) / (1000 * 60 * 60 * 24));
+                currentDays = Math.floor((now.getTime() - tempCurrent.getTime()) / (1000 * 60 * 60 * 24));
+                
+                years = currentYears;
+                months = currentMonths;
+                days = currentDays;
+
+            } else { // Se a data de referência é no futuro (contagem regressiva)
+                let tempCurrent = new Date(now);
+                let remainingYears = 0;
+                let remainingMonths = 0;
+                let remainingDays = 0;
+
+                while (tempCurrent.getTime() <= startDate.getTime()) {
+                    let nextYearCandidate = new Date(tempCurrent);
+                    nextYearCandidate.setFullYear(tempCurrent.getFullYear() + 1);
+
+                    if (nextYearCandidate.getTime() <= startDate.getTime()) {
+                        remainingYears++;
+                        tempCurrent = nextYearCandidate;
+                    } else {
+                        break;
+                    }
+                }
+
+                while (tempCurrent.getTime() <= startDate.getTime()) {
+                    let nextMonthCandidate = new Date(tempCurrent);
+                    nextMonthCandidate.setMonth(tempCurrent.getMonth() + 1);
+                    
+                    if (nextMonthCandidate.getTime() <= startDate.getTime()) {
+                        remainingMonths++;
+                        tempCurrent = nextMonthCandidate;
+                    } else {
+                        break;
+                    }
+                }
+                remainingDays = Math.floor((startDate.getTime() - tempCurrent.getTime()) / (1000 * 60 * 60 * 24));
+                
+                years = remainingYears;
+                months = remainingMonths;
+                days = remainingDays;
             }
+
 
             document.getElementById('mensagem-especial').innerHTML = suaMensagem; // Usando innerHTML para quebrar linhas
 
@@ -386,7 +412,6 @@
 
             const yearsUnitEl = document.getElementById('years-unit');
             const monthsUnitEl = document.getElementById('months-unit');
-
 
             yearsEl.innerText = formatNumber(years);
             monthsEl.innerText = formatNumber(months);
@@ -421,38 +446,49 @@
                     mensagemFinal = "Faltam " + contagemTexto + "!";
                     document.querySelector('.countdown-container').style.display = 'flex';
                 }
-            } else { 
-                if (years > 0) { contagemTexto += years + (years === 1 ? ' ano' : ' anos'); if (months > 0 && days > 0) contagemTexto += ", "; else if (months > 0 || days > 0) contagemTexto += " e "; }
-                if (months > 0) { contagemTexto += months + (months === 1 ? ' mês' : ' meses'); if (days > 0) contagemTexto += " e "; }
-                if (days > 0 || (years === 0 && months === 0 && (hours > 0 || minutes > 0 || seconds > 0))) { contagemTexto += days + (days === 1 ? ' dia' : ' dias'); } else if (years === 0 && months === 0 && days === 0) { contagemTexto += ""; }
-               
-                mensagemFinal = "Nossos caminhos se cruzaram há " + contagemTexto + ". Meu amor cresce a cada dia!";
+            } else { // Se a data de referência é no passado (ou hoje)
+                // Construindo a string de contagem para o tempo juntos
+                const parts = [];
+                if (years > 0) {
+                    parts.push(`${years} ${years === 1 ? 'ano' : 'anos'}`);
+                }
+                if (months > 0) {
+                    parts.push(`${months} ${months === 1 ? 'mês' : 'meses'}`);
+                }
+                if (days > 0) {
+                    parts.push(`${days} ${days === 1 ? 'dia' : 'dias'}`);
+                }
+
+                // Ajustando a mensagem final para o caso de "estamos juntos há"
+                if (parts.length > 0) {
+                    let lastPart = parts.pop();
+                    if (parts.length > 0) {
+                        contagemTexto = parts.join(', ') + ' e ' + lastPart;
+                    } else {
+                        contagemTexto = lastPart;
+                    }
+                    mensagemFinal = "Nossos caminhos se cruzaram há " + contagemTexto + ". Meu amor cresce a cada dia!";
+                } else {
+                    // Caso para o dia exato (se for o mesmo dia sem anos/meses completos)
+                    mensagemFinal = "Nossos caminhos se cruzaram hoje! Meu amor cresce a cada dia!";
+                }
+                
                 document.querySelector('.countdown-container').style.display = 'flex';
             }
             
             document.getElementById('contagem-dias').innerText = mensagemFinal; 
 
-            if (isExactDate && (hours + minutes + seconds === 0)) { 
-                yearsUnitEl.style.display = 'none';
-                monthsUnitEl.style.display = 'none';
-                daysEl.parentElement.style.display = 'none';
-                hoursEl.parentElement.style.display = 'none';
-                minutesEl.parentElement.style.display = 'none';
-                secondsEl.parentElement.style.display = 'none';
-            } else { 
-                document.querySelector('.countdown-container').style.display = 'flex';
-                yearsUnitEl.style.display = (years > 0) ? 'flex' : 'none';
-                monthsUnitEl.style.display = (months > 0 || years > 0) ? 'flex' : 'none';
-                daysEl.parentElement.style.display = 'flex'; 
-                hoursEl.parentElement.style.display = 'flex';
-                minutesEl.parentElement.style.display = 'flex';
-                secondsEl.parentElement.style.display = 'flex';
-            }
+            // Controla a visibilidade dos blocos de tempo
+            yearsUnitEl.style.display = (years > 0) ? 'flex' : 'none';
+            monthsUnitEl.style.display = (months > 0 || years > 0) ? 'flex' : 'none'; // Mostra meses se houver anos ou meses
+            daysEl.parentElement.style.display = 'flex'; // Dias sempre visíveis
+            hoursEl.parentElement.style.display = 'flex';
+            minutesEl.parentElement.style.display = 'flex';
+            secondsEl.parentElement.style.display = 'flex';
 
             console.log("updateCountdown executado. Mensagem: ", mensagemFinal);
             console.log("Contador visível?", document.querySelector('.countdown-container').style.display);
             console.log(`Anos: ${years}, Meses: ${months}, Dias: ${days}, Horas: ${hours}, Minutos: ${minutes}, Segundos: ${seconds}`);
-
         }
 
         // --- Lógica do Slideshow ---
@@ -506,14 +542,11 @@
                 slideshowContainer.appendChild(img);
                 slideshowImages.push(img);
             });
-
-            // NOVO: O slideshow NÃO começa a rodar aqui. Ele só é populado com as imagens.
-            // A lógica de iniciar o carrossel (setInterval) agora está em 'openSlideshow'.
         }
 
         // --- Lógica do Botão e Modal Slideshow ---
         const openSlideshowBtn = document.getElementById('openSlideshowBtn');
-        const closeSlideshowBtn = document.getElementById('closeSlideshowBtn'); // Referência ao novo botão X
+        const closeSlideshowBtn = document.getElementById('closeSlideshowBtn'); 
         
         // Função para abrir o slideshow
         function openSlideshow() {
@@ -541,7 +574,7 @@
             }
         }
 
-        if (openSlideshowBtn && slideshowContainer && closeSlideshowBtn) { // Verifique se todos os elementos existem
+        if (openSlideshowBtn && slideshowContainer && closeSlideshowBtn) { 
             openSlideshowBtn.addEventListener('click', openSlideshow);
 
             // Listener para fechar o modal ao clicar em qualquer lugar do overlay (incluindo imagens), exceto no botão 'X'
@@ -557,7 +590,6 @@
         } else {
             console.error("Um ou mais elementos essenciais (openSlideshowBtn, slideshowContainer, closeSlideshowBtn) não foram encontrados. Verifique os IDs.");
         }
-
 
         // --- Inicialização ao carregar a página ---
         document.addEventListener('DOMContentLoaded', () => {
