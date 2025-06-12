@@ -101,6 +101,9 @@
             opacity: 0; /* Inicialmente invisível */
             transition: opacity 1.5s ease-in-out; /* Transição suave */
             filter: brightness(0.7) blur(2px); /* Escurece e borra um pouco para o texto se destacar */
+            /* Para deixar as fotos mais nítidas, remova ou diminua o 'blur' acima, por exemplo: */
+            /* filter: brightness(0.7); */
+            /* filter: brightness(0.7) blur(1px); */
             transform: scale(1.05); /* Pequeno zoom para preencher melhor */
         }
         .slideshow-image.active {
@@ -135,6 +138,7 @@
         <h1>Para [Nome da Pessoa Amada], Com Todo Amor!</h1>
         <p id="mensagem-especial">
             </p>
+
         <p id="contagem-dias" style="font-size: 1.1em; margin-top: 15px; color: #555;">
             </p>
 
@@ -185,7 +189,7 @@
         // Lista de URLs das suas imagens.
         // As fotos devem estar na mesma pasta do arquivo index.html no GitHub.
         // Se as fotos estiverem em uma subpasta 'images' dentro da mesma pasta, use 'images/foto1.jpg'.
-         const images = [
+        const images = [
             "nosso_amor_1.jpeg",  // Exemplo: "meu_amor_1.jpg"
             "nosso_amor_2.jpeg",  // Exemplo: "viagem_inesquecivel.png"
             "nosso_amor_3.jpeg",
@@ -337,28 +341,53 @@
             secondsEl.nextElementSibling.innerText = seconds === 1 ? 'segundo' : 'segundos';
 
 
-            let introMessage = "";
-            let outroMessage = " Te amo mais a cada dia!"; // Mensagem padrão para datas passadas/futuras
+            // --- INÍCIO DA ALTERAÇÃO PARA MELHORAR A MENSAGEM DE TEMPO ---
+            let contagemTexto = "";
+            let mensagemFinal = "";
 
-            // Verifica se é a data exata (0 anos, 0 meses, 0 dias, 0 horas, 0 minutos, 0 segundos)
             const isExactDate = (years === 0 && months === 0 && days === 0 && hours === 0 && minutes === 0 && seconds === 0);
 
-            if (isFutureDate) {
+            if (isFutureDate) { // Se a data de referência é no futuro
                 if (isExactDate) {
-                    introMessage = "Hoje é a nossa data especial! Um dia inesquecível!";
-                    outroMessage = ""; // Sem mensagem extra se for a data exata
+                    mensagemFinal = "Hoje é a nossa data especial! Um dia inesquecível!";
                     document.querySelector('.countdown-container').style.display = 'none'; // Esconde a contagem se for o dia exato
                 } else {
-                    introMessage = "Faltam ";
+                    // Constrói a mensagem "Faltam X anos, Y meses, Z dias..."
+                    if (years > 0) {
+                        contagemTexto += years + (years === 1 ? ' ano' : ' anos');
+                        if (months > 0 && days > 0) contagemTexto += ", ";
+                        else if (months > 0 || days > 0) contagemTexto += " e "; // Adicionado para "X anos e Y meses" ou "X anos e Z dias"
+                    }
+                    if (months > 0) {
+                        contagemTexto += months + (months === 1 ? ' mês' : ' meses');
+                        if (days > 0) contagemTexto += " e "; // Adicionado para "Y meses e Z dias"
+                    }
+                    contagemTexto += days + (days === 1 ? ' dia' : ' dias'); // Dias sempre aparecem
+
+                    mensagemFinal = "Faltam " + contagemTexto + "!";
                     document.querySelector('.countdown-container').style.display = 'flex'; // Garante que a contagem esteja visível
                 }
-            } else { // Data no passado
-                introMessage = "Estamos juntos há ";
+            } else { // Se a data de referência é no passado
+                // Constrói a mensagem "Estamos juntos há X anos, Y meses, Z dias..."
+                if (years > 0) {
+                    contagemTexto += years + (years === 1 ? ' ano' : ' anos');
+                    if (months > 0 && days > 0) contagemTexto += ", ";
+                    else if (months > 0 || days > 0) contagemTexto += " e ";
+                }
+                if (months > 0) {
+                    contagemTexto += months + (months === 1 ? ' mês' : ' meses');
+                    if (days > 0) contagemTexto += " e ";
+                }
+                contagemTexto += days + (days === 1 ? ' dia' : ' dias'); // Dias sempre aparecem
+
+                mensagemFinal = "Estamos juntos há " + contagemTexto + ". Te amo mais a cada dia!";
                 document.querySelector('.countdown-container').style.display = 'flex'; // Garante que a contagem esteja visível
             }
             
-            // O parágrafo `contagem-dias` agora exibe a mensagem de introdução e a mensagem de "te amo"
-            document.getElementById('mensagem-especial').innerText = introMessage + suaMensagem + outroMessage; 
+            // O parágrafo `contagem-dias` agora exibe a mensagem completa
+            document.getElementById('contagem-dias').innerText = mensagemFinal; 
+            // --- FIM DA ALTERAÇÃO PARA MELHORAR A MENSAGEM DE TEMPO ---
+
 
             // Gerencia a visibilidade das unidades de tempo (anos, meses)
             // Se for a data exata, todas as unidades são escondidas.
