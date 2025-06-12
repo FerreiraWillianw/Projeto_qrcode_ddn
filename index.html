@@ -20,7 +20,7 @@
             overflow-x: hidden; /* Evita rolagem horizontal */
         }
         .container {
-            background-color: rgba(255, 255, 255, 0.85); /* Agora com transparência*/
+            background-color: rgba(255, 255, 255, 0.85); /* Agora com transparência */
             padding: 30px 40px;
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -345,27 +345,26 @@
             let contagemTexto = "";
             let mensagemFinal = "";
 
-            const isExactDate = (years === 0 && months === 0 && days === 0 && hours === 0 && minutes === 0 && seconds === 0);
+            // Verifica se a data atual é IGUAL à data de referência (considerando apenas a data, não a hora)
+            const isExactDate = (now.getFullYear() === startDate.getFullYear() &&
+                                 now.getMonth() === startDate.getMonth() &&
+                                 now.getDate() === startDate.getDate());
 
             if (isFutureDate) { // Se a data de referência é no futuro
-                if (isExactDate) {
+                if (isExactDate) { // Se a data de referência é hoje (mas ainda no futuro da contagem)
                     mensagemFinal = "Hoje é a nossa data especial! Um dia inesquecível!";
                     document.querySelector('.countdown-container').style.display = 'none';
                 } else {
                     // Constrói a mensagem "Faltam X anos, Y meses, Z dias..."
                     if (years > 0) {
                         contagemTexto += years + (years === 1 ? ' ano' : ' anos');
-                        // Adiciona vírgula se houver meses e dias
-                        if (months > 0 && days > 0) contagemTexto += ", ";
-                        // Adiciona "e" se houver meses ou dias, mas não ambos
-                        else if (months > 0 || days > 0) contagemTexto += " e ";
+                        if (months > 0 || days > 0) contagemTexto += ", ";
                     }
                     if (months > 0) {
                         contagemTexto += months + (months === 1 ? ' mês' : ' meses');
-                        // Adiciona "e" se houver dias após os meses
                         if (days > 0) contagemTexto += " e ";
                     }
-                    contagemTexto += days + (days === 1 ? ' dia' : ' dias'); // Dias sempre aparecem
+                    contagemTexto += days + (days === 1 ? ' dia' : ' dias'); 
 
                     mensagemFinal = "Faltam " + contagemTexto + "!";
                     document.querySelector('.countdown-container').style.display = 'flex';
@@ -374,17 +373,13 @@
                 // Constrói a mensagem "Estamos juntos há X anos, Y meses, Z dias..."
                 if (years > 0) {
                     contagemTexto += years + (years === 1 ? ' ano' : ' anos');
-                    // Adiciona vírgula se houver meses e dias
-                    if (months > 0 && days > 0) contagemTexto += ", ";
-                    // Adiciona "e" se houver meses ou dias, mas não ambos
-                    else if (months > 0 || days > 0) contagemTexto += " e ";
+                    if (months > 0 || days > 0) contagemTexto += ", ";
                 }
                 if (months > 0) {
                     contagemTexto += months + (months === 1 ? ' mês' : ' meses');
-                    // Adiciona "e" se houver dias após os meses
                     if (days > 0) contagemTexto += " e ";
                 }
-                contagemTexto += days + (days === 1 ? ' dia' : ' dias'); // Dias sempre aparecem
+                contagemTexto += days + (days === 1 ? ' dia' : ' dias'); 
 
                 mensagemFinal = "Estamos juntos há " + contagemTexto + ". Te amo mais a cada dia!";
                 document.querySelector('.countdown-container').style.display = 'flex';
@@ -395,8 +390,8 @@
 
 
             // Gerencia a visibilidade das unidades de tempo (anos, meses)
-            // ESTE É O BLOCO MAIS IMPORTANTE PARA A VISIBILIDADE DAS CAIXINHAS!
-            if (isExactDate) { 
+            // Lógica para ocultar "anos" e "meses" se forem zero ou não relevantes para o período
+            if (isExactDate) { // Se for a data exata, esconde tudo
                 yearsUnitEl.style.display = 'none';
                 monthsUnitEl.style.display = 'none';
                 daysEl.parentElement.style.display = 'none';
@@ -408,5 +403,74 @@
                 yearsUnitEl.style.display = (years > 0) ? 'flex' : 'none';
                 
                 // Meses: Mostrar se houver meses (months > 0) OU se houver anos (years > 0)
-                // Isso garante que "X anos e 00 meses" ou "00 anos e Y meses" apareça corretamente.
-                monthsUnitEl.style.display
+                // Isso garante que "X anos e 00 meses" ou "00 anos e Y meses" apareça corretamente, e que meses apareça se o ano for 0 mas houver meses.
+                monthsUnitEl.style.display = (months > 0 || years > 0) ? 'flex' : 'none';
+                
+                // Dias, Horas, Minutos, Segundos: Sempre mostrar se não for a data exata e for passado
+                daysEl.parentElement.style.display = 'flex'; 
+                hoursEl.parentElement.style.display = 'flex';
+                minutesEl.parentElement.style.display = 'flex';
+                secondsEl.parentElement.style.display = 'flex';
+            } else { // Se for futuro (e não a data exata)
+                // No futuro, geralmente mostramos todos os campos, mesmo que zero, para indicar o tempo restante
+                yearsUnitEl.style.display = 'flex';
+                monthsUnitEl.style.display = 'flex';
+                daysEl.parentElement.style.display = 'flex';
+                hoursEl.parentElement.style.display = 'flex';
+                minutesEl.parentElement.style.display = 'flex';
+                secondsEl.parentElement.style.display = 'flex';
+            }
+        }
+
+        // --- Lógica do Slideshow ---
+        let slideIndex = 0;
+        let slideshowImages = []; // Armazenará os elementos <img> que serão criados
+
+        function showSlides() {
+            // Esconde todas as imagens
+            for (let i = 0; i < slideshowImages.length; i++) {
+                slideshowImages[i].classList.remove('active');
+            }
+            // Mostra a imagem atual
+            slideshowImages[slideIndex].classList.add('active');
+            
+            // Avança para a próxima imagem
+            slideIndex++;
+            if (slideIndex >= slideshowImages.length) {
+                slideIndex = 0; // Volta para a primeira imagem quando chegar ao final
+            }
+        }
+
+        // Função para inicializar o slideshow
+        function initializeSlideshow() {
+            const slideshowContainer = document.querySelector('.slideshow-container');
+            
+            // Adiciona as imagens ao HTML
+            images.forEach(src => {
+                const img = document.createElement('img');
+                img.src = src; // Define o caminho da imagem
+                img.classList.add('slideshow-image'); // Adiciona a classe CSS
+                slideshowContainer.appendChild(img); // Adiciona a imagem ao contêiner
+                slideshowImages.push(img); // Armazena a referência para a imagem
+            });
+
+            if (slideshowImages.length > 0) {
+                showSlides(); // Mostra a primeira imagem imediatamente
+                // Inicia o slideshow automático com o intervalo definido
+                setInterval(showSlides, slideshowIntervalTime);
+            }
+        }
+
+        // NOVO: Adiciona todas as inicializações dentro do DOMContentLoaded
+        // Isso garante que os elementos HTML estejam prontos antes do script tentar acessá-los.
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeSlideshow(); // Carrega o slideshow
+
+            // Inicializa a contagem regressiva/progressiva pela primeira vez
+            updateCountdown(); 
+            // Configura a atualização da contagem a cada 1 segundo
+            setInterval(updateCountdown, 1000); 
+        });
+    </script>
+</body>
+</html>
