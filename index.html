@@ -20,7 +20,7 @@
             overflow-x: hidden; /* Evita rolagem horizontal */
         }
         .container {
-            background-color: rgba(255, 255, 255, 0.85);
+            background-color: rgba(255, 255, 255, 0.85); /* Agora com transparência */
             padding: 30px 40px;
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -197,7 +197,7 @@
             "nosso_amor_5.jpeg",
             "nosso_amor_6.jpeg",
             "nosso_amor_7.jpeg",
-            "nosso_amor_8.jpeg", // Exemplo: "melhor_dia_juntos.jpeg"
+            "nosso_amor_8.jpeg", 
             // Adicione mais URLs de imagens aqui, cada uma entre aspas e separada por vírgula.
             // Certifique-se de que o nome do arquivo aqui corresponda EXATAMENTE ao nome do arquivo que você subir no GitHub.
         ];
@@ -350,49 +350,52 @@
             if (isFutureDate) { // Se a data de referência é no futuro
                 if (isExactDate) {
                     mensagemFinal = "Hoje é a nossa data especial! Um dia inesquecível!";
-                    document.querySelector('.countdown-container').style.display = 'none'; // Esconde a contagem se for o dia exato
+                    document.querySelector('.countdown-container').style.display = 'none';
                 } else {
                     // Constrói a mensagem "Faltam X anos, Y meses, Z dias..."
                     if (years > 0) {
                         contagemTexto += years + (years === 1 ? ' ano' : ' anos');
+                        // Adiciona vírgula se houver meses e dias
                         if (months > 0 && days > 0) contagemTexto += ", ";
-                        else if (months > 0 || days > 0) contagemTexto += " e "; // Adicionado para "X anos e Y meses" ou "X anos e Z dias"
+                        // Adiciona "e" se houver meses ou dias, mas não ambos
+                        else if (months > 0 || days > 0) contagemTexto += " e ";
                     }
                     if (months > 0) {
                         contagemTexto += months + (months === 1 ? ' mês' : ' meses');
-                        if (days > 0) contagemTexto += " e "; // Adicionado para "Y meses e Z dias"
+                        // Adiciona "e" se houver dias após os meses
+                        if (days > 0) contagemTexto += " e ";
                     }
                     contagemTexto += days + (days === 1 ? ' dia' : ' dias'); // Dias sempre aparecem
 
                     mensagemFinal = "Faltam " + contagemTexto + "!";
-                    document.querySelector('.countdown-container').style.display = 'flex'; // Garante que a contagem esteja visível
+                    document.querySelector('.countdown-container').style.display = 'flex';
                 }
             } else { // Se a data de referência é no passado
                 // Constrói a mensagem "Estamos juntos há X anos, Y meses, Z dias..."
                 if (years > 0) {
                     contagemTexto += years + (years === 1 ? ' ano' : ' anos');
+                    // Adiciona vírgula se houver meses e dias
                     if (months > 0 && days > 0) contagemTexto += ", ";
+                    // Adiciona "e" se houver meses ou dias, mas não ambos
                     else if (months > 0 || days > 0) contagemTexto += " e ";
                 }
                 if (months > 0) {
                     contagemTexto += months + (months === 1 ? ' mês' : ' meses');
+                    // Adiciona "e" se houver dias após os meses
                     if (days > 0) contagemTexto += " e ";
                 }
                 contagemTexto += days + (days === 1 ? ' dia' : ' dias'); // Dias sempre aparecem
 
                 mensagemFinal = "Estamos juntos há " + contagemTexto + ". Te amo mais a cada dia!";
-                document.querySelector('.countdown-container').style.display = 'flex'; // Garante que a contagem esteja visível
+                document.querySelector('.countdown-container').style.display = 'flex';
             }
             
-            // O parágrafo `contagem-dias` agora exibe a mensagem completa
             document.getElementById('contagem-dias').innerText = mensagemFinal; 
             // --- FIM DA ALTERAÇÃO PARA MELHORAR A MENSAGEM DE TEMPO ---
 
 
             // Gerencia a visibilidade das unidades de tempo (anos, meses)
-            // Se for a data exata, todas as unidades são escondidas.
-            // Se for uma data passada, anos e meses são escondidos apenas se forem zero.
-            // Se for uma data futura (mas não a exata), todas as unidades são mostradas, mesmo se zero, para indicar o "faltam" completo.
+            // ESTE É O BLOCO MAIS IMPORTANTE PARA A VISIBILIDADE DAS CAIXINHAS!
             if (isExactDate) { 
                 yearsUnitEl.style.display = 'none';
                 monthsUnitEl.style.display = 'none';
@@ -400,14 +403,21 @@
                 hoursEl.parentElement.style.display = 'none';
                 minutesEl.parentElement.style.display = 'none';
                 secondsEl.parentElement.style.display = 'none';
-            } else if (!isFutureDate) { 
-                yearsUnitEl.style.display = (years === 0) ? 'none' : 'flex';
-                monthsUnitEl.style.display = (years === 0 && months === 0) ? 'none' : 'flex';
+            } else if (!isFutureDate) { // Se a data de referência é no passado
+                // Anos: Mostrar apenas se houver anos (years > 0)
+                yearsUnitEl.style.display = (years > 0) ? 'flex' : 'none';
+                
+                // Meses: Mostrar se houver meses (months > 0) OU se houver anos (years > 0)
+                // Isso garante que "X anos e 00 meses" ou "00 anos e Y meses" apareça corretamente.
+                monthsUnitEl.style.display = (months > 0 || years > 0) ? 'flex' : 'none';
+                
+                // Dias, Horas, Minutos, Segundos: Sempre mostrar se não for a data exata
                 daysEl.parentElement.style.display = 'flex'; 
                 hoursEl.parentElement.style.display = 'flex';
                 minutesEl.parentElement.style.display = 'flex';
                 secondsEl.parentElement.style.display = 'flex';
             } else { // Se for futuro (e não a data exata)
+                // No futuro, geralmente mostramos todos os campos, mesmo que zero, para indicar o tempo restante
                 yearsUnitEl.style.display = 'flex';
                 monthsUnitEl.style.display = 'flex';
                 daysEl.parentElement.style.display = 'flex';
