@@ -1,0 +1,59 @@
+import qrcode
+from PIL import Image
+
+# --- CONFIGURAÇÕES ESSENCIAIS PARA O SEU QR CODE ---
+
+# A URL da sua página de surpresa no GitHub Pages.
+# *** COPIE A URL QUE VOCÊ OBTEVE DO GITHUB PAGES E COLE AQUI! ***
+url_para_o_qr_code = "https://SEU_NOME_DE_USUARIO.github.io/NOME_DO_REPOSITORIO/"
+
+# Nome do arquivo de imagem do QR Code que será gerado.
+nome_arquivo_qr = "qr_code_para_biri.png"
+
+# --- FIM DAS CONFIGURAÇÕES ---
+
+
+# --- Lógica de cálculo de dias e mensagem agora estão no index.html (JavaScript) ---
+# Você pode manter estas variáveis como referência, mas elas não são usadas na geração do QR Code.
+# mensagem_especial = "Meu amor, você é a pessoa mais incrível que já conheci. Cada dia ao seu lado é um presente. Te amo muito, Biri! ❤️"
+# data_referencia_str = "2024-09-26"
+
+
+# --- GERAÇÃO E SALVAMENTO DO QR CODE (Agora usando a URL como único dado) ---
+
+# 1. Configura o objeto QR Code
+qr = qrcode.QRCode(
+    version=None, # Deixa o gerador escolher a melhor versão (tamanho)
+    error_correction=qrcode.constants.ERROR_CORRECT_L, # Nível de correção de erro baixo (bom para leitura em celular)
+    box_size=10, # Tamanho de cada ponto do QR Code em pixels
+    border=4, # Espessura da borda branca ao redor do QR Code
+)
+
+# 2. Adiciona a URL como dado para o QR Code
+qr.add_data(url_para_o_qr_code)
+qr.make(fit=True) # Ajusta o tamanho do QR Code para caber os dados
+
+# 3. Cria a imagem do QR Code
+img = qr.make_image(fill_color="black", back_color="white")
+
+# 4. Salva a imagem do QR Code em um arquivo
+try:
+    img.save(nome_arquivo_qr)
+    print(f"✅ QR Code gerado com sucesso e salvo como '{nome_arquivo_qr}'!")
+except Exception as e:
+    print(f"❌ Erro ao salvar o QR Code: {e}. Verifique as permissões da pasta.")
+
+# --- Opcional: Abrir a imagem automaticamente (para verificar) ---
+# (Essa parte continua a mesma, se você quiser manter)
+try:
+    imagem_aberta = Image.open(nome_arquivo_qr)
+    # imagem_aberta.show() # Descomente esta linha se quiser que tente abrir a imagem
+except Exception as e:
+    print(f"⚠️ Não foi possível abrir a imagem do QR Code automaticamente. Por favor, verifique o arquivo '{nome_arquivo_qr}' na pasta onde está o seu notebook.")
+
+
+print("\n--- Projeto Amo Muito Meu Biri ---")
+print("O QR Code foi atualizado para apontar para a sua página online.")
+print(f"URL apontada pelo QR Code: {url_para_o_qr_code}")
+print(f"Procure o arquivo '{nome_arquivo_qr}' na mesma pasta do seu notebook.")
+print("\nEscaneie este QR Code com a câmera do seu celular!")
