@@ -20,7 +20,7 @@
             overflow-x: hidden; /* Evita rolagem horizontal */
         }
         .container {
-            background-color: rgba(255, 255, 255, 0.50); /* Agora com transparência */
+            background-color: rgba(255, 255, 255, 0.85); /* Agora com transparência */
             padding: 30px 40px;
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -40,12 +40,18 @@
             font-size: 1.2em;
             margin-bottom: 15px;
         }
-
-        #mensagem-especial {
-            /* Adicione este bloco ou modifique-o se já existir */
-        color: #d147a3; /* Escolha a cor que desejar. Ex: #FF5733 para laranja, #007bff para azul, etc. */
-        font-weight: bold; /* Exemplo: deixar em negrito */
+        #mensagem-especial { /* Estilo para a mensagem principal */
+            color: #9c27b0; /* Exemplo: um tom de roxo para a mensagem especial */
+            font-weight: bold; /* Opcional: para deixar o texto em negrito */
         }
+        
+        /* NOVO ESTILO: Para a cor do texto da contagem dinâmica */
+        #contagem-dias {
+            color: #9c27b0 !important; /* Cor rosa vibrante. Use !important para garantir que se sobreponha ao estilo inline. */
+            font-weight: bold; /* Deixar em negrito, por exemplo */
+            font-size: 1.25em; /* Ligeiramente maior para destacar */
+        }
+
         .countdown-container {
             margin-top: 25px;
             margin-bottom: 25px;
@@ -163,7 +169,7 @@
         <p id="mensagem-especial">
             </p>
 
-        <p id="contagem-dias" style="font-size: 1.1em; margin-top: 15px; color: #555;">
+        <p id="contagem-dias"> 
             </p>
 
         <div class="countdown-container">
@@ -203,37 +209,26 @@
         // --- CONFIGURAÇÕES DA PÁGINA (JavaScript) ---
 
         // A data de referência para a contagem (AAAA-MM-DD)
-        // Exemplo: "2024-06-12" (hoje) para testar 0 anos, 0 meses
-        // Exemplo: "2024-05-12" (1 mês atrás) para testar 1 mês
-        // Exemplo: "2023-06-12" (1 ano atrás) para testar 1 ano
-        // Exemplo: "2023-05-12" (1 ano e 1 mês atrás)
-        const dataReferenciaStr = "2025-01-01"; // *** DATA FIXA: 1 de Janeiro de 2025 ***
+        const dataReferenciaStr = "2025-01-01"; // DATA FIXA: 1 de Janeiro de 2025
 
         // Sua mensagem especial para a pessoa amada
         const suaMensagem = "Meu amor, cada dia ao seu lado é um presente que celebro com todo o meu coração!";
 
         // --- CONFIGURAÇÕES DO SLIDESHOW ---
-        // Lista de URLs das suas imagens.
-        // As fotos devem estar na mesma pasta do arquivo index.html no GitHub.
-        // Se as fotos estiverem em uma subpasta 'images' dentro da mesma pasta, use 'images/foto1.jpg'.
         const images = [
-            "nosso_amor_1.jpeg",  // Exemplo: "meu_amor_1.jpg"
-            "nosso_amor_2.jpeg",  // Exemplo: "viagem_inesquecivel.png"
+            "nosso_amor_1.jpeg",
+            "nosso_amor_2.jpeg",
             "nosso_amor_3.jpeg",
             "nosso_amor_4.jpeg",
             "nosso_amor_5.jpeg",
             "nosso_amor_6.jpeg",
             "nosso_amor_7.jpeg",
             "nosso_amor_8.jpeg", 
-            // Adicione mais URLs de imagens aqui, cada uma entre aspas e separada por vírgula.
-            // Certifique-se de que o nome do arquivo aqui corresponda EXATAMENTE ao nome do arquivo que você subir no GitHub.
         ];
-        // Tempo em milissegundos para cada imagem aparecer (1000ms = 1 segundo)
         const slideshowIntervalTime = 5000; // 5 segundos por padrão
 
         // --- LÓGICA DE CÁLCULO E EXIBIÇÃO EM TEMPO REAL ---
 
-        // Função para formatar números com zero à esquerda (ex: 5 -> 05)
         const formatNumber = (num) => num < 10 ? '0' + num : num;
 
         function updateCountdown() {
@@ -242,9 +237,8 @@
 
             let diffMs = now.getTime() - startDate.getTime(); 
             const isFutureDate = diffMs < 0;
-            diffMs = Math.abs(diffMs); // Trabalha com a diferença absoluta para calcular os intervalos
+            diffMs = Math.abs(diffMs);
 
-            // Calcula segundos, minutos e horas a partir do total de milissegundos
             let seconds = Math.floor((diffMs / 1000) % 60);
             let minutes = Math.floor((diffMs / (1000 * 60)) % 60);
             let hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
@@ -253,85 +247,53 @@
             let months = 0;
             let days = 0;
 
-            // --- LÓGICA DE CÁLCULO DE ANOS, MESES E DIAS (Mais Robusta) ---
-            if (!isFutureDate) { // Se a data de referência é no passado
-                let tempCurrent = new Date(startDate); // Começa na data de referência
-                
-                // Calcula Anos
+            if (!isFutureDate) { 
+                let tempCurrent = new Date(startDate); 
                 while (tempCurrent.getFullYear() < now.getFullYear() ||
                        (tempCurrent.getFullYear() === now.getFullYear() && tempCurrent.getMonth() < now.getMonth()) ||
                        (tempCurrent.getFullYear() === now.getFullYear() && tempCurrent.getMonth() === now.getMonth() && tempCurrent.getDate() <= now.getDate())) {
-                    
                     let nextYearCandidate = new Date(tempCurrent);
                     nextYearCandidate.setFullYear(tempCurrent.getFullYear() + 1);
-
                     if (nextYearCandidate.getTime() <= now.getTime()) {
                         years++;
-                        tempCurrent = nextYearCandidate; // Avança a data base para o próximo ano
-                    } else {
-                        break; // Não pode adicionar um ano completo
-                    }
+                        tempCurrent = nextYearCandidate;
+                    } else { break; }
                 }
-
-                // Calcula Meses (partindo da data ajustada pelos anos)
                 while (tempCurrent.getMonth() < now.getMonth() ||
                        (tempCurrent.getMonth() === now.getMonth() && tempCurrent.getDate() <= now.getDate())) {
-                    
                     let nextMonthCandidate = new Date(tempCurrent);
                     nextMonthCandidate.setMonth(tempCurrent.getMonth() + 1);
-
                     if (nextMonthCandidate.getTime() <= now.getTime()) {
                         months++;
-                        tempCurrent = nextMonthCandidate; // Avança a data base para o próximo mês
-                    } else {
-                        break; // Não pode adicionar um mês completo
-                    }
+                        tempCurrent = nextMonthCandidate;
+                    } else { break; }
                 }
-                
-                // Calcula Dias (o que sobrou, partindo da data ajustada pelos anos e meses)
                 days = Math.floor((now.getTime() - tempCurrent.getTime()) / (1000 * 60 * 60 * 24));
 
-            } else { // Se a data de referência é no futuro (contagem regressiva)
-                let tempCurrent = new Date(now); // Começa na data atual
-                
-                // Calcula Anos
+            } else { 
+                let tempCurrent = new Date(now); 
                 while (tempCurrent.getFullYear() < startDate.getFullYear() ||
                        (tempCurrent.getFullYear() === startDate.getFullYear() && tempCurrent.getMonth() < startDate.getMonth()) ||
                        (tempCurrent.getFullYear() === startDate.getFullYear() && tempCurrent.getMonth() === startDate.getMonth() && tempCurrent.getDate() <= startDate.getDate())) {
-                    
                     let nextYearCandidate = new Date(tempCurrent);
                     nextYearCandidate.setFullYear(tempCurrent.getFullYear() + 1);
-
                     if (nextYearCandidate.getTime() <= startDate.getTime()) {
                         years++;
                         tempCurrent = nextYearCandidate;
-                    } else {
-                        break;
-                    }
+                    } else { break; }
                 }
-
-                // Calcula Meses
                 while (tempCurrent.getMonth() < startDate.getMonth() ||
                        (tempCurrent.getMonth() === startDate.getMonth() && tempCurrent.getDate() <= startDate.getDate())) {
-                    
                     let nextMonthCandidate = new Date(tempCurrent);
                     nextMonthCandidate.setMonth(tempCurrent.getMonth() + 1);
-
                     if (nextMonthCandidate.getTime() <= startDate.getTime()) {
                         months++;
                         tempCurrent = nextMonthCandidate;
-                    } else {
-                        break;
-                    }
+                    } else { break; }
                 }
-                
-                // Calcula Dias
                 days = Math.floor((startDate.getTime() - tempCurrent.getTime()) / (1000 * 60 * 60 * 24));
             }
-            // --- FIM DA NOVA LÓGICA DE CÁLCULO DE ANOS, MESES E DIAS ---
 
-
-            // Exibe a mensagem principal e os componentes de tempo
             document.getElementById('mensagem-especial').innerText = suaMensagem;
 
             const yearsEl = document.getElementById('years');
@@ -360,87 +322,48 @@
             secondsEl.nextElementSibling.innerText = seconds === 1 ? 'segundo' : 'segundos';
 
 
-            // --- INÍCIO DA ALTERAÇÃO PARA MELHORAR A MENSAGEM DE TEMPO ---
             let contagemTexto = "";
             let mensagemFinal = "";
 
-            // Verifica se a data atual é IGUAL à data de referência (considerando apenas a data, não a hora)
             const isExactDate = (now.getFullYear() === startDate.getFullYear() &&
                                  now.getMonth() === startDate.getMonth() &&
                                  now.getDate() === startDate.getDate());
 
-            if (isFutureDate) { // Se a data de referência é no futuro
-                if (isExactDate && (hours + minutes + seconds === 0)) { // Considera a data E hora 00:00:00
+            if (isFutureDate) { 
+                if (isExactDate && (hours + minutes + seconds === 0)) {
                     mensagemFinal = "Hoje é a nossa data especial! Um dia inesquecível!";
                     document.querySelector('.countdown-container').style.display = 'none';
                 } else {
-                    // Constrói a mensagem "Faltam X anos, Y meses, Z dias..."
-                    if (years > 0) {
-                        contagemTexto += years + (years === 1 ? ' ano' : ' anos');
-                        if (months > 0 && days > 0) contagemTexto += ", ";
-                        else if (months > 0 || days > 0) contagemTexto += " e ";
-                    }
-                    if (months > 0) {
-                        contagemTexto += months + (months === 1 ? ' mês' : ' meses');
-                        if (days > 0) contagemTexto += " e ";
-                    }
-                    if (days > 0 || (years === 0 && months === 0 && (hours > 0 || minutes > 0 || seconds > 0))) { // Sempre mostra dias se não houver anos/meses ou se houver tempo restante menor que 1 dia
-                        contagemTexto += days + (days === 1 ? ' dia' : ' dias'); 
-                    } else if (years === 0 && months === 0 && days === 0) { // Se for menos de um dia
-                         contagemTexto += ""; // Deixa vazio para não aparecer "0 dias"
-                    }
-
+                    if (years > 0) { contagemTexto += years + (years === 1 ? ' ano' : ' anos'); if (months > 0 && days > 0) contagemTexto += ", "; else if (months > 0 || days > 0) contagemTexto += " e "; }
+                    if (months > 0) { contagemTexto += months + (months === 1 ? ' mês' : ' meses'); if (days > 0) contagemTexto += " e "; }
+                    if (days > 0 || (years === 0 && months === 0 && (hours > 0 || minutes > 0 || seconds > 0))) { contagemTexto += days + (days === 1 ? ' dia' : ' dias'); } else if (years === 0 && months === 0 && days === 0) { contagemTexto += ""; }
                     mensagemFinal = "Faltam " + contagemTexto + "!";
                     document.querySelector('.countdown-container').style.display = 'flex';
                 }
-            } else { // Se a data de referência é no passado
-                // Constrói a mensagem "Estamos juntos há X anos, Y meses, Z dias..."
-                if (years > 0) {
-                    contagemTexto += years + (years === 1 ? ' ano' : ' anos');
-                    if (months > 0 && days > 0) contagemTexto += ", ";
-                    else if (months > 0 || days > 0) contagemTexto += " e ";
-                }
-                if (months > 0) {
-                    contagemTexto += months + (months === 1 ? ' mês' : ' meses');
-                    if (days > 0) contagemTexto += " e ";
-                }
-                if (days > 0 || (years === 0 && months === 0 && (hours > 0 || minutes > 0 || seconds > 0))) { // Sempre mostra dias se não houver anos/meses ou se houver tempo restante menor que 1 dia
-                     contagemTexto += days + (days === 1 ? ' dia' : ' dias'); 
-                } else if (years === 0 && months === 0 && days === 0) { // Se for menos de um dia
-                     contagemTexto += ""; // Deixa vazio para não aparecer "0 dias"
-                }
+            } else { 
+                if (years > 0) { contagemTexto += years + (years === 1 ? ' ano' : ' anos'); if (months > 0 && days > 0) contagemTexto += ", "; else if (months > 0 || days > 0) contagemTexto += " e "; }
+                if (months > 0) { contagemTexto += months + (months === 1 ? ' mês' : ' meses'); if (days > 0) contagemTexto += " e "; }
+                if (days > 0 || (years === 0 && months === 0 && (hours > 0 || minutes > 0 || seconds > 0))) { contagemTexto += days + (days === 1 ? ' dia' : ' dias'); } else if (years === 0 && months === 0 && days === 0) { contagemTexto += ""; }
                
                 mensagemFinal = "Estamos juntos há " + contagemTexto + ". Te amo mais a cada dia!";
                 document.querySelector('.countdown-container').style.display = 'flex';
             }
             
             document.getElementById('contagem-dias').innerText = mensagemFinal; 
-            // --- FIM DA ALTERAÇÃO PARA MELHORAR A MENSAGEM DE TEMPO ---
-
 
             // Gerencia a visibilidade das unidades de tempo (anos, meses, dias)
             // Lógica para ocultar "anos" e "meses" se forem zero.
-            if (isExactDate && (hours + minutes + seconds === 0)) { // Se for a data exata (e hora), esconde tudo
+            if (isExactDate && (hours + minutes + seconds === 0)) { 
                 yearsUnitEl.style.display = 'none';
                 monthsUnitEl.style.display = 'none';
                 daysEl.parentElement.style.display = 'none';
                 hoursEl.parentElement.style.display = 'none';
                 minutesEl.parentElement.style.display = 'none';
                 secondsEl.parentElement.style.display = 'none';
-            } else { // Se não for a data exata (seja passado ou futuro)
-                // Sempre mostrar o container de contagem
+            } else { 
                 document.querySelector('.countdown-container').style.display = 'flex';
-
-                // Anos: Mostrar apenas se houver anos (years > 0)
                 yearsUnitEl.style.display = (years > 0) ? 'flex' : 'none';
-                
-                // Meses: Mostrar se houver meses (months > 0) OU se houver anos (years > 0)
                 monthsUnitEl.style.display = (months > 0 || years > 0) ? 'flex' : 'none';
-                
-                // Dias: Mostrar se houver dias (days > 0) OU se não houver anos nem meses
-                // Ou seja, sempre mostrar dias, a menos que anos e meses já preencham a contagem.
-                // Mas, para o propósito de mostrar o "tempo restante" em detalhe,
-                // vamos manter os dias/horas/min/seg sempre visíveis se a data não for exata.
                 daysEl.parentElement.style.display = 'flex'; 
                 hoursEl.parentElement.style.display = 'flex';
                 minutesEl.parentElement.style.display = 'flex';
@@ -450,56 +373,43 @@
 
         // --- Lógica do Slideshow ---
         let slideIndex = 0;
-        let slideshowImages = []; // Armazenará os elementos <img> que serão criados
+        let slideshowImages = []; 
 
         function showSlides() {
-            // Se não houver imagens, não faz nada
             if (slideshowImages.length === 0) return;
-
-            // Esconde todas as imagens
             for (let i = 0; i < slideshowImages.length; i++) {
                 slideshowImages[i].classList.remove('active');
             }
-            // Mostra a imagem atual
             slideshowImages[slideIndex].classList.add('active');
             
-            // Avança para a próxima imagem
             slideIndex++;
             if (slideIndex >= slideshowImages.length) {
-                slideIndex = 0; // Volta para a primeira imagem quando chegar ao final
+                slideIndex = 0;
             }
         }
 
-        // Função para inicializar o slideshow
         function initializeSlideshow() {
             const slideshowContainer = document.querySelector('.slideshow-container');
             if (!slideshowContainer) {
                 console.error("Erro: Elemento .slideshow-container não encontrado.");
                 return;
             }
-            
-            // Limpa quaisquer imagens anteriores para evitar duplicatas em caso de re-execução
             slideshowContainer.innerHTML = '';
-            slideshowImages = []; // Reinicia o array de imagens
+            slideshowImages = []; 
 
-            // Adiciona as imagens ao HTML
             images.forEach(src => {
                 const img = document.createElement('img');
-                img.src = src; // Define o caminho da imagem
-                img.classList.add('slideshow-image'); // Adiciona a classe CSS
-                
-                // Adiciona um listener de erro para debugging de imagens
+                img.src = src; 
+                img.classList.add('slideshow-image'); 
                 img.onerror = () => {
                     console.error(`Erro ao carregar imagem: ${src}. Verifique o nome e o caminho do arquivo.`);
                 };
-
-                slideshowContainer.appendChild(img); // Adiciona a imagem ao contêiner
-                slideshowImages.push(img); // Armazena a referência para a imagem
+                slideshowContainer.appendChild(img);
+                slideshowImages.push(img);
             });
 
             if (slideshowImages.length > 0) {
-                showSlides(); // Mostra a primeira imagem imediatamente
-                // Inicia o slideshow automático com o intervalo definido, se ainda não estiver rodando
+                showSlides(); 
                 if (window.slideshowIntervalId) {
                     clearInterval(window.slideshowIntervalId);
                 }
@@ -509,22 +419,14 @@
             }
         }
 
-        // Garante que todas as inicializações ocorram APÓS o carregamento completo do DOM.
         document.addEventListener('DOMContentLoaded', () => {
             console.log("DOM completamente carregado. Iniciando scripts.");
-
-            // Inicializa o slideshow
             initializeSlideshow(); 
-
-            // Inicializa a contagem pela primeira vez
             updateCountdown(); 
-            
-            // Configura a atualização da contagem a cada 1 segundo
             if (window.countdownIntervalId) {
                 clearInterval(window.countdownIntervalId);
             }
             window.countdownIntervalId = setInterval(updateCountdown, 1000); 
-
             console.log("Scripts de contagem e slideshow iniciados.");
         });
     </script>
