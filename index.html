@@ -20,7 +20,7 @@
             overflow-x: hidden; /* Evita rolagem horizontal */
         }
         .container {
-            background-color: rgba(255, 255, 255, 0.85); /* Agora com transparência */
+            background-color: rgba(255, 255, 255, 0.50); /* Agora com transparência */
             padding: 30px 40px;
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -180,10 +180,10 @@
 
         // A data de referência para a contagem (AAAA-MM-DD)
         // Por exemplo: "2018-05-06" para 6 de maio de 2018
-        const dataReferenciaStr = "2024-09-26"; 
+        const dataReferenciaStr = "2024-06-12"; // EXEMPLO: Use uma data mais antiga para testar anos/meses
 
         // Sua mensagem especial para a pessoa amada
-        const suaMensagem = "Sua mensagem de amor personalizada aqui. Ex: 'Meu amor, cada dia ao seu lado é um presente!'";
+        const suaMensagem = "Meu amor, cada dia ao seu lado é um presente que celebro com todo o meu coração!";
 
         // --- CONFIGURAÇÕES DO SLIDESHOW ---
         // Lista de URLs das suas imagens.
@@ -225,91 +225,77 @@
             let totalHours = Math.floor(totalMinutes / 60);
             let hours = totalHours % 24;
             
-            // Variáveis para anos, meses, dias calculados de forma mais precisa
+            let totalDays = Math.floor(totalHours / 24); // Calcule o total de dias primeiro
+
             let years = 0;
             let months = 0;
-            let days = 0; 
+            let days = totalDays; // Inicializa days com o total de dias para o cálculo modular
 
-            // Cria cópias das datas para manipulação no cálculo de anos/meses/dias
-            let tempStartDate = new Date(startDate);
-            let tempNow = new Date(now);
 
-            // Zera a hora para focar apenas nas datas para anos/meses/dias
-            tempStartDate.setHours(0,0,0,0);
-            tempNow.setHours(0,0,0,0);
+            // --- NOVA LÓGICA PARA ANOS E MESES ---
+            if (!isFutureDate) { // Se a data de referência é no passado
+                let tempDate = new Date(startDate);
+                years = 0;
+                months = 0;
 
-            if (!isFutureDate) { // Se a data de referência é no passado (já se passou tempo)
                 // Calcula anos
-                while (tempStartDate.getFullYear() < tempNow.getFullYear() ||
-                       (tempStartDate.getFullYear() === tempNow.getFullYear() && tempStartDate.getMonth() < tempNow.getMonth()) ||
-                       (tempStartDate.getFullYear() === tempNow.getFullYear() && tempStartDate.getMonth() === tempNow.getMonth() && tempStartDate.getDate() <= tempNow.getDate())) {
-                    
-                    let nextYear = new Date(tempStartDate);
-                    nextYear.setFullYear(tempStartDate.getFullYear() + 1);
-                    if (nextYear.getTime() <= tempNow.getTime()) {
+                while (true) {
+                    let nextYear = new Date(tempDate);
+                    nextYear.setFullYear(tempDate.getFullYear() + 1);
+                    if (nextYear.getTime() <= now.getTime()) {
                         years++;
-                        tempStartDate = nextYear;
+                        tempDate = nextYear;
                     } else {
                         break;
                     }
                 }
-                
-                // Calcula meses
-                while (tempStartDate.getMonth() < tempNow.getMonth() ||
-                       (tempStartDate.getMonth() === tempNow.getMonth() && tempStartDate.getDate() <= tempNow.getDate())) {
 
-                    let nextMonth = new Date(tempStartDate);
-                    nextMonth.setMonth(tempStartDate.getMonth() + 1);
-                    if (nextMonth.getTime() <= tempNow.getTime()) {
+                // Calcula meses restantes após os anos
+                while (true) {
+                    let nextMonth = new Date(tempDate);
+                    nextMonth.setMonth(tempDate.getMonth() + 1);
+                    if (nextMonth.getTime() <= now.getTime()) {
                         months++;
-                        tempStartDate = nextMonth;
+                        tempDate = nextMonth;
                     } else {
                         break;
                     }
                 }
-                // Calcula dias restantes
-                days = Math.floor((tempNow.getTime() - tempStartDate.getTime()) / (1000 * 60 * 60 * 24));
+                // Calcula dias restantes após os anos e meses
+                days = Math.floor((now.getTime() - tempDate.getTime()) / (1000 * 60 * 60 * 24));
 
-            } else { // Se a data de referência é no futuro (faltam X tempo)
-                // Lógica de "faltam" anos, meses, dias, horas, minutos, segundos
-                // Inverte a ordem das datas para o cálculo
-                let tempEndDate = new Date(startDate); // A data futura
-                let tempCurrentDate = new Date(now); // A data atual
+            } else { // Se a data de referência é no futuro
+                let tempDate = new Date(now); // Começa do agora para contar até a data futura
+                years = 0;
+                months = 0;
 
-                tempEndDate.setHours(0,0,0,0);
-                tempCurrentDate.setHours(0,0,0,0);
-
-                // Calcula anos restantes
-                while (tempEndDate.getFullYear() > tempCurrentDate.getFullYear() ||
-                       (tempEndDate.getFullYear() === tempCurrentDate.getFullYear() && tempEndDate.getMonth() > tempCurrentDate.getMonth()) ||
-                       (tempEndDate.getFullYear() === tempCurrentDate.getFullYear() && tempEndDate.getMonth() === tempCurrentDate.getMonth() && tempEndDate.getDate() >= tempCurrentDate.getDate())) {
-                    
-                    let nextYear = new Date(tempEndDate);
-                    nextYear.setFullYear(tempEndDate.getFullYear() - 1);
-                    if (nextYear.getTime() >= tempCurrentDate.getTime()) {
+                // Calcula anos
+                while (true) {
+                    let nextYear = new Date(tempDate);
+                    nextYear.setFullYear(tempDate.getFullYear() + 1);
+                    if (nextYear.getTime() <= startDate.getTime()) { // Compara com a data futura
                         years++;
-                        tempEndDate = nextYear;
+                        tempDate = nextYear;
                     } else {
                         break;
                     }
                 }
 
-                // Calcula meses restantes
-                while (tempEndDate.getMonth() > tempCurrentDate.getMonth() ||
-                       (tempEndDate.getMonth() === tempCurrentDate.getMonth() && tempEndDate.getDate() >= tempCurrentDate.getDate())) {
-                    
-                    let nextMonth = new Date(tempEndDate);
-                    nextMonth.setMonth(tempEndDate.getMonth() - 1);
-                    if (nextMonth.getTime() >= tempCurrentDate.getTime()) {
+                // Calcula meses restantes após os anos
+                while (true) {
+                    let nextMonth = new Date(tempDate);
+                    nextMonth.setMonth(tempDate.getMonth() + 1);
+                    if (nextMonth.getTime() <= startDate.getTime()) { // Compara com a data futura
                         months++;
-                        tempEndDate = nextMonth;
+                        tempDate = nextMonth;
                     } else {
                         break;
                     }
                 }
-                // Calcula dias restantes
-                days = Math.floor((tempEndDate.getTime() - tempCurrentDate.getTime()) / (1000 * 60 * 60 * 24));
+                // Calcula dias restantes após os anos e meses
+                days = Math.floor((startDate.getTime() - tempDate.getTime()) / (1000 * 60 * 60 * 24));
             }
+            // --- FIM DA NOVA LÓGICA PARA ANOS E MESES ---
 
 
             // Exibe a mensagem principal e os componentes de tempo
@@ -398,7 +384,10 @@
                 hoursEl.parentElement.style.display = 'none';
                 minutesEl.parentElement.style.display = 'none';
                 secondsEl.parentElement.style.display = 'none';
-            } else if (!isFutureDate) { // Se a data de referência é no passado
+            } else { // Se não for a data exata (seja passado ou futuro)
+                // Sempre mostrar o container de contagem
+                document.querySelector('.countdown-container').style.display = 'flex';
+
                 // Anos: Mostrar apenas se houver anos (years > 0)
                 yearsUnitEl.style.display = (years > 0) ? 'flex' : 'none';
                 
@@ -406,16 +395,9 @@
                 // Isso garante que "X anos e 00 meses" ou "00 anos e Y meses" apareça corretamente, e que meses apareça se o ano for 0 mas houver meses.
                 monthsUnitEl.style.display = (months > 0 || years > 0) ? 'flex' : 'none';
                 
-                // Dias, Horas, Minutos, Segundos: Sempre mostrar se não for a data exata e for passado
+                // Dias, Horas, Minutos, Segundos: Sempre mostrar, a menos que anos e meses já tenham absorvido todo o tempo
+                // (Para manter a contagem em tempo real, estes devem aparecer)
                 daysEl.parentElement.style.display = 'flex'; 
-                hoursEl.parentElement.style.display = 'flex';
-                minutesEl.parentElement.style.display = 'flex';
-                secondsEl.parentElement.style.display = 'flex';
-            } else { // Se for futuro (e não a data exata)
-                // No futuro, geralmente mostramos todos os campos, mesmo que zero, para indicar o tempo restante
-                yearsUnitEl.style.display = 'flex';
-                monthsUnitEl.style.display = 'flex';
-                daysEl.parentElement.style.display = 'flex';
                 hoursEl.parentElement.style.display = 'flex';
                 minutesEl.parentElement.style.display = 'flex';
                 secondsEl.parentElement.style.display = 'flex';
@@ -427,6 +409,9 @@
         let slideshowImages = []; // Armazenará os elementos <img> que serão criados
 
         function showSlides() {
+            // Se não houver imagens, não faz nada
+            if (slideshowImages.length === 0) return;
+
             // Esconde todas as imagens
             for (let i = 0; i < slideshowImages.length; i++) {
                 slideshowImages[i].classList.remove('active');
@@ -444,32 +429,59 @@
         // Função para inicializar o slideshow
         function initializeSlideshow() {
             const slideshowContainer = document.querySelector('.slideshow-container');
+            if (!slideshowContainer) {
+                console.error("Erro: Elemento .slideshow-container não encontrado.");
+                return;
+            }
             
+            // Limpa quaisquer imagens anteriores para evitar duplicatas em caso de re-execução
+            slideshowContainer.innerHTML = '';
+            slideshowImages = []; // Reinicia o array de imagens
+
             // Adiciona as imagens ao HTML
             images.forEach(src => {
                 const img = document.createElement('img');
                 img.src = src; // Define o caminho da imagem
                 img.classList.add('slideshow-image'); // Adiciona a classe CSS
+                
+                // Adiciona um listener de erro para debugging de imagens
+                img.onerror = () => {
+                    console.error(`Erro ao carregar imagem: ${src}. Verifique o nome e o caminho do arquivo.`);
+                };
+
                 slideshowContainer.appendChild(img); // Adiciona a imagem ao contêiner
                 slideshowImages.push(img); // Armazena a referência para a imagem
             });
 
             if (slideshowImages.length > 0) {
                 showSlides(); // Mostra a primeira imagem imediatamente
-                // Inicia o slideshow automático com o intervalo definido
-                setInterval(showSlides, slideshowIntervalTime);
+                // Inicia o slideshow automático com o intervalo definido, se ainda não estiver rodando
+                if (window.slideshowIntervalId) {
+                    clearInterval(window.slideshowIntervalId);
+                }
+                window.slideshowIntervalId = setInterval(showSlides, slideshowIntervalTime);
+            } else {
+                console.warn("Nenhuma imagem configurada para o slideshow. Verifique a array 'images'.");
             }
         }
 
-        // NOVO: Adiciona todas as inicializações dentro do DOMContentLoaded
-        // Isso garante que os elementos HTML estejam prontos antes do script tentar acessá-los.
+        // Garante que todas as inicializações ocorram APÓS o carregamento completo do DOM.
         document.addEventListener('DOMContentLoaded', () => {
-            initializeSlideshow(); // Carrega o slideshow
+            console.log("DOM completamente carregado. Iniciando scripts.");
 
-            // Inicializa a contagem regressiva/progressiva pela primeira vez
+            // Inicializa o slideshow
+            initializeSlideshow(); 
+
+            // Inicializa a contagem pela primeira vez
             updateCountdown(); 
+            
             // Configura a atualização da contagem a cada 1 segundo
-            setInterval(updateCountdown, 1000); 
+            if (window.countdownIntervalId) {
+                clearInterval(window.countdownIntervalId);
+            }
+            window.countdownIntervalId = setInterval(updateCountdown, 1000); 
+
+            console.log("Scripts de contagem e slideshow iniciados.");
         });
     </script>
 </body>
