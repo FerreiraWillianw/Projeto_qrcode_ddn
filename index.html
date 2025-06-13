@@ -25,6 +25,36 @@
             overflow: hidden;
         }
 
+        /* Estilo para a camada inicial e botão */
+        #initialOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro e um pouco transparente */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* Garante que fique acima de tudo */
+            transition: opacity 1s ease-in-out; /* Transição suave para desaparecer */
+        }
+        #startButton {
+            padding: 15px 30px;
+            font-size: 1.5em;
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        #startButton:hover {
+            background-color: #d147a3;
+            transform: translateY(-2px);
+        }
+
         .container {
             background-color: rgba(255, 255, 255, 0.85); /* Agora com transparência */
             padding: 30px 40px;
@@ -32,9 +62,11 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             max-width: 600px;
             margin: 20px;
-            animation: fadeIn 2s ease-out; /* Animação de entrada */
+            /* REMOVIDO: animation: fadeIn 2s ease-out; */ 
             position: relative; /* Para empilhamento com z-index */
             z-index: 1; /* Garante que o conteúdo fique acima do slideshow */
+            opacity: 0; /* INICIALMENTE INVISÍVEL, controlado pelo JS */
+            transition: opacity 1s ease-in-out; /* Transição para aparecer */
         }
         h1 {
             color: #d147a3; /* Um tom de rosa mais escuro */
@@ -95,10 +127,7 @@
             font-size: 2em;
             animation: pulse 1.5s infinite;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* REMOVIDO: @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } } */
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
@@ -218,8 +247,8 @@
                 font-size: 1em;
             }
             /* Slideshow container (modal) em telas menores */
-            .slideshow-image { /* Note: removed .modal-active here to apply to images within modal */
-                width: 95%; /* Ajusta o tamanho da imagem para caber melhor no mobile */
+            .slideshow-image { 
+                width: 95%; 
                 height: 95%;
             }
             /* Ajusta a posição do botão fechar para telas menores */
@@ -228,17 +257,21 @@
                 right: 15px;
                 font-size: 30px;
             }
+            #startButton {
+                padding: 12px 25px;
+                font-size: 1.2em;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="slideshow-container" id="slideshowContainer">
-        <span class="close-btn" id="closeSlideshowBtn">&times;</span>
+    <div id="initialOverlay">
+        <button id="startButton">❤️ Aperte ❤️</button>
     </div>
 
     <div class="container">
         <span class="heart">❤️</span>
-        <h1>Para Analice, com amor!</h1>
+        <h1>Para Analice!</h1>
         <p id="mensagem-especial">
         </p>
 
@@ -277,7 +310,11 @@
         </p>
         <span class="heart">❤️</span>
 
-        <button id="openSlideshowBtn">Nossa história!</button>
+        <button id="openSlideshowBtn">Nossos momentos!</button>
+    </div>
+
+    <div class="slideshow-container" id="slideshowContainer">
+        <span class="close-btn" id="closeSlideshowBtn">&times;</span>
     </div>
 
     <script>
@@ -287,7 +324,7 @@
         const dataReferenciaStr = "2024-09-26"; 
 
         // Sua mensagem especial para a pessoa amada
-        const suaMensagem = "Feliz Dia dos Namorados, minha vida! Nossa história é a mais linda que eu poderia sonhar, e cada dia ao seu lado é um presente para mim. Que o nosso amor continue crescendo e nos fazendo transbordar felicidade e companheirismo. Você é e sempre será meu grande amor, obrigado por ser quem é e me ajudar a melhorar a cada dia! Te amo biri!!";
+        const suaMensagem = "Feliz Dia dos Namorados, minha vida! Obrigado por me proporcionar felicidade, carinho e paixão, cada dia ao seu lado é um presente para mim. Que o nosso amor continue crescendo e nos fazendo transbordar felicidade, afeto e lealdade. Você é é incrível, e eu não poderia estar mais feliz, obrigado por ser quem é e me ajudar a melhorar a cada dia! Te amo biri!!";
 
         // --- CONFIGURAÇÕES DO SLIDESHOW ---
         const images = [
@@ -311,9 +348,8 @@
             "nosso_amor_18.jpeg",
             "nosso_amor_19.jpeg",
             "nosso_amor_20.jpeg",
-
         ];
-        const slideshowIntervalTime = 3000; // 3 segundos por padrão
+        const slideshowIntervalTime = 2750; // 3 segundos por padrão
         let currentSlideshowInterval; // Variável para controlar o intervalo do slideshow
 
         // --- LÓGICA DE CÁLCULO E EXIBIÇÃO EM TEMPO REAL ---
@@ -325,8 +361,8 @@
             const now = new Date();
 
             let diffMs = now.getTime() - startDate.getTime(); 
-            const isFutureDate = diffMs < 0; // Verifica se a data de referência é no futuro
-            diffMs = Math.abs(diffMs); // Usa o valor absoluto da diferença para os cálculos
+            const isFutureDate = diffMs < 0; 
+            diffMs = Math.abs(diffMs); 
 
             let seconds = Math.floor((diffMs / 1000) % 60);
             let minutes = Math.floor((diffMs / (1000 * 60)) % 60);
@@ -336,9 +372,7 @@
             let months = 0;
             let days = 0;
 
-            // Lógica para calcular anos, meses e dias de forma exata, considerando o fluxo do tempo
-            // Esta parte foi ajustada para lidar com datas passadas corretamente
-            if (!isFutureDate) { // Se a data de referência é no passado (ou hoje)
+            if (!isFutureDate) { 
                 let tempCurrent = new Date(startDate);
                 let currentYears = 0;
                 let currentMonths = 0;
@@ -373,34 +407,31 @@
                 months = currentMonths;
                 days = currentDays;
 
-            } else { // Se a data de referência é no futuro (contagem regressiva)
+            } else { 
                 let tempCurrent = new Date(now);
                 let remainingYears = 0;
                 let remainingMonths = 0;
                 let remainingDays = 0;
 
-                while (tempCurrent.getTime() <= startDate.getTime()) {
+                while (tempCurrent.getFullYear() < startDate.getFullYear() ||
+                       (tempCurrent.getFullYear() === startDate.getFullYear() && tempCurrent.getMonth() < startDate.getMonth()) ||
+                       (tempCurrent.getFullYear() === startDate.getFullYear() && tempCurrent.getMonth() === startDate.getMonth() && tempCurrent.getDate() <= startDate.getDate())) {
                     let nextYearCandidate = new Date(tempCurrent);
                     nextYearCandidate.setFullYear(tempCurrent.getFullYear() + 1);
 
                     if (nextYearCandidate.getTime() <= startDate.getTime()) {
                         remainingYears++;
                         tempCurrent = nextYearCandidate;
-                    } else {
-                        break;
-                    }
+                    } else { break; }
                 }
-
-                while (tempCurrent.getTime() <= startDate.getTime()) {
+                while (tempCurrent.getMonth() < startDate.getMonth() ||
+                       (tempCurrent.getMonth() === startDate.getMonth() && tempCurrent.getDate() <= startDate.getDate())) {
                     let nextMonthCandidate = new Date(tempCurrent);
                     nextMonthCandidate.setMonth(tempCurrent.getMonth() + 1);
-                    
                     if (nextMonthCandidate.getTime() <= startDate.getTime()) {
                         remainingMonths++;
                         tempCurrent = nextMonthCandidate;
-                    } else {
-                        break;
-                    }
+                    } else { break; }
                 }
                 remainingDays = Math.floor((startDate.getTime() - tempCurrent.getTime()) / (1000 * 60 * 60 * 24));
                 
@@ -410,7 +441,7 @@
             }
 
 
-            document.getElementById('mensagem-especial').innerHTML = suaMensagem; // Usando innerHTML para quebrar linhas
+            document.getElementById('mensagem-especial').innerHTML = suaMensagem; 
 
             const yearsEl = document.getElementById('years');
             const monthsEl = document.getElementById('months');
@@ -455,8 +486,7 @@
                     mensagemFinal = "Faltam " + contagemTexto + "!";
                     document.querySelector('.countdown-container').style.display = 'flex';
                 }
-            } else { // Se a data de referência é no passado (ou hoje)
-                // Construindo a string de contagem para o tempo juntos
+            } else { 
                 const parts = [];
                 if (years > 0) {
                     parts.push(`${years} ${years === 1 ? 'ano' : 'anos'}`);
@@ -468,7 +498,6 @@
                     parts.push(`${days} ${days === 1 ? 'dia' : 'dias'}`);
                 }
 
-                // Ajustando a mensagem final para o caso de "estamos juntos há"
                 if (parts.length > 0) {
                     let lastPart = parts.pop();
                     if (parts.length > 0) {
@@ -478,7 +507,6 @@
                     }
                     mensagemFinal = "Nossos caminhos se cruzaram há " + contagemTexto + ". Meu amor cresce a cada dia!";
                 } else {
-                    // Caso para o dia exato (se for o mesmo dia sem anos/meses completos)
                     mensagemFinal = "Nossos caminhos se cruzaram hoje! Meu amor cresce a cada dia!";
                 }
                 
@@ -487,10 +515,9 @@
             
             document.getElementById('contagem-dias').innerText = mensagemFinal; 
 
-            // Controla a visibilidade dos blocos de tempo
             yearsUnitEl.style.display = (years > 0) ? 'flex' : 'none';
-            monthsUnitEl.style.display = (months > 0 || years > 0) ? 'flex' : 'none'; // Mostra meses se houver anos ou meses
-            daysEl.parentElement.style.display = 'flex'; // Dias sempre visíveis
+            monthsUnitEl.style.display = (months > 0 || years > 0) ? 'flex' : 'none'; 
+            daysEl.parentElement.style.display = 'flex'; 
             hoursEl.parentElement.style.display = 'flex';
             minutesEl.parentElement.style.display = 'flex';
             secondsEl.parentElement.style.display = 'flex';
@@ -504,23 +531,20 @@
         let slideIndex = 0;
         let slideshowImages = []; 
         const slideshowContainer = document.getElementById('slideshowContainer');
-        const body = document.body; // Referência ao body para controlar a rolagem
+        const body = document.body; 
 
         function showSlides() {
             if (slideshowImages.length === 0) {
                 console.warn("Nenhuma imagem no slideshowImages array. Verifique initializeSlideshowImages().");
                 return;
             }
-            // Remove 'active' de todas as imagens
             for (let i = 0; i < slideshowImages.length; i++) {
                 slideshowImages[i].classList.remove('active');
             }
-            // Adiciona 'active' à imagem atual
             slideshowImages[slideIndex].classList.add('active');
             
             console.log(`Ativando slide: ${slideIndex}. Image src: ${slideshowImages[slideIndex].src}`);
 
-            // Avança para a próxima imagem, voltando ao início se for a última
             slideIndex++;
             if (slideIndex >= slideshowImages.length) {
                 slideIndex = 0;
@@ -532,8 +556,6 @@
                 console.error("Erro: Elemento slideshowContainer não encontrado.");
                 return;
             }
-            // Não limpa o innerHTML para preservar o botão de fechar que está no HTML
-            // Mas, sim, remove as imagens existentes se a função for chamada novamente
             const existingImages = slideshowContainer.querySelectorAll('.slideshow-image');
             existingImages.forEach(img => img.remove());
 
@@ -557,27 +579,24 @@
         const openSlideshowBtn = document.getElementById('openSlideshowBtn');
         const closeSlideshowBtn = document.getElementById('closeSlideshowBtn'); 
         
-        // Função para abrir o slideshow
         function openSlideshow() {
             console.log("Abrindo modal do slideshow.");
             slideshowContainer.classList.add('modal-active');
             body.classList.add('no-scroll');
-            slideIndex = 0; // Reinicia o índice do slide para a primeira imagem
-            showSlides(); // Exibe a primeira imagem imediatamente
+            slideIndex = 0; 
+            showSlides(); 
 
-            // Inicia o intervalo do slideshow apenas quando o modal é aberto
             if (currentSlideshowInterval) {
                 clearInterval(currentSlideshowInterval);
             }
             currentSlideshowInterval = setInterval(showSlides, slideshowIntervalTime);
         }
 
-        // Função para fechar o slideshow
         function closeSlideshow() {
             console.log("Fechando modal do slideshow.");
             slideshowContainer.classList.remove('modal-active');
             body.classList.remove('no-scroll');
-            // Para o intervalo do slideshow quando o modal é fechado
+            
             if (currentSlideshowInterval) {
                 clearInterval(currentSlideshowInterval);
             }
@@ -586,24 +605,49 @@
         if (openSlideshowBtn && slideshowContainer && closeSlideshowBtn) { 
             openSlideshowBtn.addEventListener('click', openSlideshow);
 
-            // Listener para fechar o modal ao clicar em qualquer lugar do overlay (incluindo imagens), exceto no botão 'X'
             slideshowContainer.addEventListener('click', (event) => {
                 if (event.target === slideshowContainer || (event.target.classList.contains('slideshow-image') && event.target.id !== 'closeSlideshowBtn')) {
                     closeSlideshow();
                 }
             });
             
-            // Listener para o botão 'X' de fechar
             closeSlideshowBtn.addEventListener('click', closeSlideshow);
 
         } else {
             console.error("Um ou mais elementos essenciais (openSlideshowBtn, slideshowContainer, closeSlideshowBtn) não foram encontrados. Verifique os IDs.");
         }
 
-        // --- Inicialização ao carregar a página ---
+
+        // --- NOVO: Lógica da Camada Inicial com Botão "Aperte aqui!" ---
         document.addEventListener('DOMContentLoaded', () => {
             console.log("DOM completamente carregado. Iniciando scripts.");
-            initializeSlideshowImages(); // Apenas prepara as imagens no DOM
+
+            const initialOverlay = document.getElementById('initialOverlay');
+            const startButton = document.getElementById('startButton');
+            const mainContainer = document.querySelector('.container');
+            
+            if (startButton && initialOverlay && mainContainer) {
+                // Certifica-se de que o mainContainer está completamente invisível no início
+                // Já está no CSS, mas reforça aqui, se necessário.
+                mainContainer.style.opacity = '0'; 
+
+                startButton.addEventListener('click', () => {
+                    initialOverlay.style.opacity = '0'; // Faz a camada escura desaparecer
+                    initialOverlay.style.pointerEvents = 'none'; // Impede interação com o overlay transparente
+
+                    mainContainer.style.opacity = '1'; // Faz o conteúdo principal aparecer com transição
+
+                    // Opcional: Remove o overlay completamente do DOM após a transição
+                    initialOverlay.addEventListener('transitionend', () => {
+                        initialOverlay.remove();
+                    }, { once: true }); 
+                });
+            } else {
+                console.error("Elementos para a camada inicial (initialOverlay, startButton, mainContainer) não encontrados. Verifique os IDs/Classes.");
+            }
+
+            // Inicialização dos scripts da página principal (contador, etc.)
+            initializeSlideshowImages(); 
             updateCountdown(); 
             if (window.countdownIntervalId) {
                 clearInterval(window.countdownIntervalId);
